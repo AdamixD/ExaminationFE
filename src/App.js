@@ -1,22 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import LoginForm from './components/Auth/LoginForm';
+import UserActions from './components/User/UserActions';
+import './styles/App.css';
 
 function App() {
+  const [token, setToken] = useState(null);
+
+  const handleLogout = () => {
+    setToken(null);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {token ? (
+          <UserActions token={token} onLogout={handleLogout} />
+        ) : (
+          <LoginForm onLogin={setToken} />
+        )}
       </header>
     </div>
   );
