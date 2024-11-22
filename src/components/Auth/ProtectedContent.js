@@ -1,7 +1,7 @@
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import React, { useState } from 'react';
 import { fetchProtectedData } from '../../services/api';
-import SubjectList from "./SubjectList";
+import LecturerView from "../Lecturer/LecturerView";
 
 function ProtectedContent({ token }) {
   const [message, setMessage] = useState('');
@@ -33,11 +33,8 @@ function ProtectedContent({ token }) {
             </Link>
           </div>
         } />
-        <Route path='/student_access' element={
-          <SubjectList />
-        } />
-        <Route path='/lecturer_access' element={
-          <SubjectList />
+        <Route path='/lecturer_access/*' element={
+          <LecturerView />
         } />
       </Routes>
     </div>
