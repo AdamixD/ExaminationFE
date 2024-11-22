@@ -1,15 +1,17 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import React, { useState } from 'react';
 import { fetchProtectedData } from '../../services/api';
 import SubjectList from "./SubjectList";
 
 function ProtectedContent({ token }) {
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleFetchData = async (endpoint) => {
     try {
       const data = await fetchProtectedData(token, endpoint);
       setMessage(data.message);
+      navigate('/' + endpoint);
     } catch (error) {
       setMessage('Brak dostępu do tego zasobu!');
     }
@@ -31,7 +33,10 @@ function ProtectedContent({ token }) {
             </Link>
           </div>
         } />
-        <Route path='/subjectList' element={
+        <Route path='/student_access' element={
+          <SubjectList />
+        } />
+        <Route path='/lecturer_access' element={
           <SubjectList />
         } />
       </Routes>
