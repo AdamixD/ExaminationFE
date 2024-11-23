@@ -1,0 +1,11 @@
+/* styles/theme.css */
+:root {
+    --primary-color: #4caf50; /* Zielony */
+    --secondary-color: #80cbc4; /* Jasny zielony */
+    --tertiary-color: #37474f; /* Szary */
+    --background-color: #e0f2f1; /* Jasne tło */
+    --text-color: #333; /* Ciemny tekst */
+    --button-hover: #388e3c; /* Kolor po najechaniu */
+    --header-bg: #004d40; /* Tło nagłówka */
+    --footer-bg: #263238; /* Tło stopki */
+}
