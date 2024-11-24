@@ -9,12 +9,11 @@ function LoginPage({ onLogin }) {
         if (token) {
             localStorage.setItem('token', token);
             onLogin(token);
-            navigate('/dashboard');
+            navigate('/courses');
         } else {
             console.error("Nie otrzymano tokena!");
         }
     };
-
 
     return (
         <div className="login-page">

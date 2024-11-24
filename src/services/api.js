@@ -6,11 +6,3 @@ const api = axios.create({
 });
 
 export default api;
-
-
-// export const fetchProtectedData = async (token, endpoint) => {
-//   const response = await axios.get(`${API_URL}/${API_ROUTE}/${endpoint}`, {
-//     headers: { Authorization: `Bearer ${token}` }
-//   });
-//   return response.data;
-// };

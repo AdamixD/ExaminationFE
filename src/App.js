@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
+import CoursesPage from './pages/CoursesPage';
 import './styles/global.css';
 import './styles/theme.css';
 
@@ -32,19 +32,8 @@ function App() {
             <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
             <main className="main-content">
                 <Routes>
-                    <Route
-                        path="/login"
-                        element={
-                            isLoggedIn ? <Navigate to="/dashboard" replace /> : <LoginPage onLogin={handleLogin} />
-                        }
-                    />
-                    <Route
-                        path="/dashboard"
-                        element={
-                            isLoggedIn ? <DashboardPage /> : <Navigate to="/login" replace />
-                        }
-                    />
-                    <Route path="*" element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} replace />} />
+                    <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+                    <Route path="/courses" element={isLoggedIn ? <CoursesPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
                 </Routes>
             </main>
             <Footer />

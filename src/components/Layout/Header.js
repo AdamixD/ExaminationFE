@@ -1,17 +1,43 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import '../../styles/Layout.css';
+import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { getUser } from "../../services/userService";
+import "../../styles/Layout.css";
 
-function Header({ isLoggedIn, onLogout }) {
+const Header = ({ isLoggedIn, onLogout }) => {
+    const [user, setUser] = useState(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (isLoggedIn) {
+                const token = localStorage.getItem("token");
+                try {
+                    const data = await getUser(token);
+                    setUser(data);
+                } catch (err) {
+                    setError("Nie udało się pobrać danych użytkownika.");
+                }
+            }
+        };
+
+        fetchUser();
+    }, [isLoggedIn]);
+
     return (
         <header className="header">
             <div className="logo">PW</div>
             <nav>
                 {isLoggedIn ? (
                     <>
-                        <NavLink to="/dashboard" className="nav-link">
-                            Dashboard
-                        </NavLink>
+                        <span className="user-name">
+                            {error ? (
+                                <span className="error">{error}</span>
+                            ) : user ? (
+                                `${user.name} ${user.surname}`
+                            ) : (
+                                "Ładowanie..."
+                            )}
+                        </span>
                         <button onClick={onLogout} className="logout-button">
                             Wyloguj się
                         </button>
@@ -24,6 +50,6 @@ function Header({ isLoggedIn, onLogout }) {
             </nav>
         </header>
     );
-}
+};
 
 export default Header;
