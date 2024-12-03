@@ -3,7 +3,7 @@ import { getUser } from './userService';
 
 const API_ROUTE = 'course_realizations';
 
-export const getUserCourses = async (token) => {
+export const getExams = async (token) => {
     const response = await api.get(`/${API_ROUTE}/user`,
         {
             headers: { Authorization: `Bearer ${token}` },
@@ -12,7 +12,7 @@ export const getUserCourses = async (token) => {
     return response.data;
 };
 
-export const addUserCourse = async (token, name, shortName) => {
+export const addExam = async (token, name, shortName) => {
     // Course table.
     const response = await api.post(`/courses`,
         { title: name, shortcut: shortName },

@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { addUserCourse, getUserCourses } from "../services/courseService";
-import CourseCard from "../components/Courses/CourseCard";
-import "../styles/CoursesPage.css";
+import { addExam, getExams } from "../services/examService";
+import ExamCard from "../components/Exams/ExamCard";
+import "../styles/ExamsPage.css";
 
-const CoursesPage = ({ token }) => {
-    const [courses, setCourses] = useState([]);
+const ExamsPage = ({ token }) => {
+    const [exams, setExams] = useState([]);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(0);
     const [newSubjectName, setNewSubjectName] = useState('');
     const [newShortName, setNewShortName] = useState('');
 
-    const fetchCourses = async (token) => {
+    const fetchExams = async (token) => {
         try {
-            const data = await getUserCourses(token);
-            setCourses(data);
+            const data = await getExams(token);
+            setExams(data);
         } catch (err) {
-            setError("Nie udało się pobrać przedmiotów.");
+            setError("Nie udało się pobrać egzaminów.");
         }
     };
 
     useEffect(() => {
-        fetchCourses(token);
+        fetchExams(token);
     }, [token]);
 
     const showFormFunc = async () => {
@@ -32,7 +32,7 @@ const CoursesPage = ({ token }) => {
         
         if (newSubjectName !== '' && newShortName !== '')
         {
-            addUserCourse(token, newSubjectName, newShortName);
+            addExam(token, newSubjectName, newShortName);
         }
         setNewSubjectName('');
         setNewShortName('');
@@ -40,14 +40,14 @@ const CoursesPage = ({ token }) => {
       };
 
     return (
-        <div className="courses-page">
-            <header className="courses-header">
-                <h2>Przedmioty</h2>
+        <div className="exams-page">
+            <header className="exams-header">
+                <h2>Egzaminki</h2>
             </header>
             {error && <p className="error">{error}</p>}
-            <div className="courses-list">
-                {courses.map((course) => (
-                    <CourseCard key={course.id} course={course} />
+            <div className="exams-list">
+                {exams.map((exam) => (
+                    <ExamCard key={exam.id} exam={exam} />
                 ))}
             </div>
             {showForm===0 && 
@@ -76,4 +76,5 @@ const CoursesPage = ({ token }) => {
     );
 };
 
-export default CoursesPage;
+export default ExamsPage;
+
