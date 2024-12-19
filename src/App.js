@@ -1,26 +1,47 @@
-import React, { useState } from 'react';
-import LoginForm from './components/Auth/LoginForm';
-import UserActions from './components/User/UserActions';
-import './styles/App.css';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Layout/Header';
+import Footer from './components/Layout/Footer';
+import LoginPage from './pages/LoginPage';
+import CoursesPage from './pages/CoursesPage';
+import ExamsPage from './pages/ExamsPage';
+import './styles/global.css';
+import './styles/theme.css';
 
 function App() {
-  const [token, setToken] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogout = () => {
-    setToken(null);
-  };
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsLoggedIn(true);
+        }
+    }, []);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        {token ? (
-          <UserActions token={token} onLogout={handleLogout} />
-        ) : (
-          <LoginForm onLogin={setToken} />
-        )}
-      </header>
-    </div>
-  );
+    const handleLogin = (token) => {
+        localStorage.setItem('token', token);
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+    };
+
+    return (
+        <div id="root">
+            <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+            <main className="main-content">
+                <Routes>
+                    <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+                    <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
+                    <Route path="/courses" element={isLoggedIn ? <CoursesPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
+                    <Route path="/courses/*" element={isLoggedIn ? <ExamsPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
+                </Routes>
+            </main>
+            <Footer />
+        </div>
+    );
 }
 
 export default App;

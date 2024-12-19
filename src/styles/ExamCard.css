@@ -1,0 +1,48 @@
+.exam-card {
+    background-color: #d3e8e4;
+    padding: 10px 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-family: Arial, sans-serif;
+}
+
+.exam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.exam-info {
+    display: flex;
+    width: 380px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.exam-data-item {
+    font-weight: bold;
+    font-size: 14px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.course-semester {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.course-title {
+    width: 75%;
+    text-align: left;
+    font-size: 20px;
+    color: #34495e;
+    padding-left: 20px;
+    word-wrap: break-word;
+}
