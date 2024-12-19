@@ -20,13 +20,13 @@
 
 .exam-info {
     display: flex;
-    width: 80px;
+    width: 380px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
 }
 
-.exam-code {
+.exam-data-item {
     font-weight: bold;
     font-size: 14px;
     color: #2c3e50;

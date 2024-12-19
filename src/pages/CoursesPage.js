@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { addUserCourse, getUserCourses } from "../services/courseService";
+import { getUserCourses } from "../services/courseService";
 import CourseCard from "../components/Courses/CourseCard";
 import "../styles/CoursesPage.css";
 
 const CoursesPage = ({ token }) => {
     const [courses, setCourses] = useState([]);
     const [error, setError] = useState(null);
-    const [showForm, setShowForm] = useState(0);
-    const [newSubjectName, setNewSubjectName] = useState('');
-    const [newShortName, setNewShortName] = useState('');
+    // Todo - ogarnąć jak sprawdzić, czy to student, czy wykładowca.
+    const [isStudent] = useState(true);
 
     const fetchCourses = async (token) => {
         try {
@@ -23,22 +22,6 @@ const CoursesPage = ({ token }) => {
         fetchCourses(token);
     }, [token]);
 
-    const showFormFunc = async () => {
-        setShowForm(1);
-      };
-
-
-    const addSubject = async () => {
-        
-        if (newSubjectName !== '' && newShortName !== '')
-        {
-            addUserCourse(token, newSubjectName, newShortName);
-        }
-        setNewSubjectName('');
-        setNewShortName('');
-        setShowForm(0);
-      };
-
     return (
         <div className="courses-page">
             <header className="courses-header">
@@ -49,29 +32,8 @@ const CoursesPage = ({ token }) => {
                 {courses.map((course) => (
                     <CourseCard key={course.id} course={course} />
                 ))}
+                {courses.length===0 && <p>W bieżącym semestrze nie {isStudent ? "jesteś zapisany na żaden przedmiot" : "prowadzisz żadnego przedmiotu"}.</p>}
             </div>
-            {showForm===0 && 
-                <button onClick={showFormFunc}>
-                    Dodaj nowy przedmiot
-                </button>
-            }
-            {showForm===1 && 
-                <form onSubmit={addSubject}>
-                    <input
-                        type="subject"
-                        placeholder="Nazwa przedmiotu"
-                        value={newSubjectName}
-                        onChange={(e) => setNewSubjectName(e.target.value)}
-                    />
-                    <input
-                        type="subject"
-                        placeholder="Skrót przedmiotu"
-                        value={newShortName}
-                        onChange={(e) => setNewShortName(e.target.value)}
-                    />
-                    <button type="submit">Dodaj przedmiot</button>
-                </form>
-            }
         </div>
     );
 };

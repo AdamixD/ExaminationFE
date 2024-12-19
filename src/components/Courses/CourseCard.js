@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const CourseCard = ({ course }) => {
     let navigate = useNavigate();
     return (
-        <button className="course-card" onClick={() => {navigate('/courses/' + course.course.shortcut)}}>
+        <button className="course-card" onClick={() => {navigate('/courses/' + course.course.id)}}>
             <div className="course-info">
                 <p className="course-code">{course.course.shortcut}</p>
                 <p className="course-semester">{course.semester}</p>

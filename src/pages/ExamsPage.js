@@ -7,12 +7,19 @@ const ExamsPage = ({ token }) => {
     const [exams, setExams] = useState([]);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(0);
-    const [newSubjectName, setNewSubjectName] = useState('');
-    const [newShortName, setNewShortName] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [duration, setDuration] = useState('');
+    const [randomization, setRandomization] = useState(0);
 
-    const fetchExams = async (token) => {
+    const course_id = window.location.href.split("/courses/")[1];
+
+    // Todo - ogarnąć jak sprawdzić, czy to student, czy wykładowca.
+    const [isLecturer] = useState(true);
+
+    const fetchExams = async (token, course_id) => {
         try {
-            const data = await getExams(token);
+            const data = await getExams(token, course_id);
             setExams(data);
         } catch (err) {
             setError("Nie udało się pobrać egzaminów.");
@@ -20,29 +27,25 @@ const ExamsPage = ({ token }) => {
     };
 
     useEffect(() => {
-        fetchExams(token);
-    }, [token]);
+        fetchExams(token, course_id);
+    }, [token, course_id]);
 
-    const showFormFunc = async () => {
-        setShowForm(1);
-      };
-
-
-    const addSubject = async () => {
+    const addNewExam = async () => {
         
-        if (newSubjectName !== '' && newShortName !== '')
+        if (startDate !== '' && endDate !== '' && duration !== '')
         {
-            addExam(token, newSubjectName, newShortName);
+            addExam(token, startDate, endDate, duration, randomization, course_id);
         }
-        setNewSubjectName('');
-        setNewShortName('');
+        setStartDate('');
+        setEndDate('');
+        setDuration('');
         setShowForm(0);
       };
 
     return (
         <div className="exams-page">
             <header className="exams-header">
-                <h2>Egzaminki</h2>
+                <h2>Egzaminy z przedmiotu</h2>
             </header>
             {error && <p className="error">{error}</p>}
             <div className="exams-list">
@@ -50,26 +53,54 @@ const ExamsPage = ({ token }) => {
                     <ExamCard key={exam.id} exam={exam} />
                 ))}
             </div>
-            {showForm===0 && 
-                <button onClick={showFormFunc}>
+            {exams.length===0 && !error && <p>Dla tego przedmiotu nie zdefiniowano żadnego egzaminu.</p>}
+            {showForm===0 && isLecturer && !error && 
+                <button onClick={() => {setShowForm(1);}}>
                     Dodaj nowy przedmiot
                 </button>
             }
-            {showForm===1 && 
-                <form onSubmit={addSubject}>
+            {showForm===1 && isLecturer && !error &&
+                <form onSubmit={addNewExam}>
                     <input
                         type="subject"
-                        placeholder="Nazwa przedmiotu"
-                        value={newSubjectName}
-                        onChange={(e) => setNewSubjectName(e.target.value)}
-                    />
+                        placeholder="Data rozpoczęcia"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    /><br />
                     <input
                         type="subject"
-                        placeholder="Skrót przedmiotu"
-                        value={newShortName}
-                        onChange={(e) => setNewShortName(e.target.value)}
+                        placeholder="Data zakończenia"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                    /><br />
+                    <input
+                        type="subject"
+                        placeholder="Czas trwania"
+                        value={duration}
+                        onChange={(e) => setDuration(e.target.value)}
+                    /><br />
+                    <input
+                        id="not_random"
+                        type="radio"
+                        checked = {randomization === 0}
+                        onChange={() => setRandomization(0)}
                     />
-                    <button type="submit">Dodaj przedmiot</button>
+                    <label for="not_random">Brak losowości przy doborze pytań</label><br />
+                    <input
+                        id="order"
+                        type="radio"
+                        checked = {randomization === 1}
+                        onChange={() => setRandomization(1)}
+                    />
+                    <label for="order">Losowa kolejność pytań</label><br />
+                    <input
+                        id="set"
+                        type="radio"
+                        checked = {randomization === 2}
+                        onChange={() => setRandomization(2)}
+                    />
+                    <label for="set">Pytania losowane ze zbioru</label><br />
+                    <button type="submit">Dodaj egzamin</button>
                 </form>
             }
         </div>

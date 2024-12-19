@@ -1,10 +1,10 @@
 import api from './api';
-import { getUser } from './userService';
+// import { getUser } from './userService';
 
-const API_ROUTE = 'course_realizations';
+const API_ROUTE = 'exams';
 
-export const getExams = async (token) => {
-    const response = await api.get(`/${API_ROUTE}/user`,
+export const getExams = async (token, id) => {
+    const response = await api.get(`/${API_ROUTE}/all/${id}`,
         {
             headers: { Authorization: `Bearer ${token}` },
         }
@@ -12,21 +12,11 @@ export const getExams = async (token) => {
     return response.data;
 };
 
-export const addExam = async (token, name, shortName) => {
+export const addExam = async (token, startDate, endDate, duration, randomization, course_id) => {
     // Course table.
-    const response = await api.post(`/courses`,
-        { title: name, shortcut: shortName },
-        // { headers: { Authorization: `Bearer ${token}` } }
+    const response = await api.post(`${API_ROUTE}/`,
+        { start_date:startDate, end_date: endDate, duration_limit: duration, status: String(randomization), course_realization_id: course_id },
+        { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    const user = await getUser(token);
-    console.log(user.id);
-    // Intersection table
-    await api.post(`/${API_ROUTE}`,
-        // {headers: { Authorization: `Bearer ${token}` }},
-        {semester: "24Z",
-        lecturer_id: user.id,
-        course_id: response.data.id},
-    );
-    return 0;
+    return response;
 };
