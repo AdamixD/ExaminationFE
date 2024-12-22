@@ -14,6 +14,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
                 try {
                     const data = await getUser(token);
                     setUser(data);
+                    localStorage.setItem('userRole', data.role);
                 } catch (err) {
                     setError("Nie udało się pobrać danych użytkownika.");
                 }

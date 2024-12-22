@@ -4,6 +4,7 @@ import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import LoginPage from './pages/LoginPage';
 import CoursesPage from './pages/CoursesPage';
+import ExamsPage from './pages/ExamsPage';
 import './styles/global.css';
 import './styles/theme.css';
 
@@ -34,6 +35,7 @@ function App() {
                 <Routes>
                     <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
                     <Route path="/courses" element={isLoggedIn ? <CoursesPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
+                    <Route path="/exams" element={isLoggedIn ? <ExamsPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
                 </Routes>
             </main>
             <Footer />

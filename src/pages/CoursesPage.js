@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUserCourses } from "../services/courseService";
-import CourseCard from "../components/Courses/CourseCard";
+import CourseCard from "../components/Course/CourseCard";
 import "../styles/CoursesPage.css";
 
 const CoursesPage = ({ token }) => {

@@ -68,14 +68,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
-
-
-Chcę zaimplementować aplikację webową, która będzie systemem do przeprowadzenia egzaminów. Aplikacja ta będzie 
-mogła zapewniać możliwość tworzenia egzaminów, przechowywania o nich informacji, wykonywania ich, generowania pytań i 
-wiele innych. Możemy wyróżnić dwa typy użytkowników: studenta i lecturera. Każdy z nich będzie miał możliwość wykonywania 
-innych akcji. Na początku chcę abyś wygenerował kod umożliwiający logowanie i ogólnie mówiąc autoryzację i autentykację.
-Zachowaj strukturę zgodnie z najlepszymi praktykami. Aplikacja posiadać będzie wiele dostepnych akcji, przez co proszę 
-o duży podział komponentów serwisów i tym podobnych. Załączam również zdjęcie jak chcę aby wyglądała strona odpowiedzialna za logowanie.
-Chcę aby motyw ten był motywem powielanym również na kolejnych stronach.
