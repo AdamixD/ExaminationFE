@@ -15,7 +15,3 @@ export const login = async (email, password) => {
        throw error;
    }
 };
-
-export const register = async (email, password) => {
-    await api.post('/users', { email, password });
-};

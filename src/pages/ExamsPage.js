@@ -30,7 +30,7 @@ const ExamsPage = ({ token }) => {
     }, [token, courseId]);
 
     const handleAddExam = (type) => {
-        navigate(`/add-exam/${type}`);
+        navigate(`/exam/add/${type}`);
     };
 
     return (
