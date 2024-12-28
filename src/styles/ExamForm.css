@@ -1,0 +1,51 @@
+/* examForm.css */
+
+.exam-form-container h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.exam-form {
+    background-color: white;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.exam-form label {
+    font-weight: bold;
+    display: block;
+    margin-top: 20px;
+}
+
+.exam-form input[type="text"],
+.exam-form input[type="datetime-local"],
+.exam-form input[type="number"],
+.exam-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.exam-form button {
+    width: 100%;
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+    background-color: var(--header-bg);
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.exam-form button:hover {
+    background-color: var(--tertiary-color);
+}

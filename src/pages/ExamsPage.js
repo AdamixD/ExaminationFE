@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getUserExams } from "../services/examService";
 import ExamCard from "../components/Exams/ExamCard";
+import { useNavigate } from "react-router-dom";
 import "../styles/ExamsPage.css";
 
 const ExamsPage = ({ token }) => {
@@ -8,6 +9,7 @@ const ExamsPage = ({ token }) => {
     const [error, setError] = useState(null);
     const courseId = localStorage.getItem('courseId');
     const userRole = localStorage.getItem('userRole');
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!courseId) {
@@ -27,6 +29,10 @@ const ExamsPage = ({ token }) => {
         fetchUserExams();
     }, [token, courseId]);
 
+    const handleAddExam = (type) => {
+        navigate(`/add-exam/${type}`);
+    };
+
     return (
         <div className="exams-page">
             <header className="exams-header">
@@ -40,8 +46,8 @@ const ExamsPage = ({ token }) => {
             </div>
             {(userRole === "LECTURER") && (
                 <div className="exams-actions">
-                    <button className="exams-button" onClick={() => {/* handle add test */}}>Dodaj test</button>
-                    <button className="exams-button" onClick={() => {/* handle add project */}}>Dodaj projekt</button>
+                    <button className="exams-button" onClick={() => handleAddExam('test')}>Dodaj test</button>
+                    <button className="exams-button" onClick={() => handleAddExam('project')}>Dodaj projekt</button>
                 </div>
             )}
         </div>

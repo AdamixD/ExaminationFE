@@ -5,6 +5,7 @@ import Footer from './components/Layout/Footer';
 import LoginPage from './pages/LoginPage';
 import CoursesPage from './pages/CoursesPage';
 import ExamsPage from './pages/ExamsPage';
+import ExamFormPage from './pages/ExamFormPage';
 import './styles/global.css';
 import './styles/theme.css';
 
@@ -36,6 +37,8 @@ function App() {
                     <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
                     <Route path="/courses" element={isLoggedIn ? <CoursesPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
                     <Route path="/exams" element={isLoggedIn ? <ExamsPage token={localStorage.getItem("token")} /> : <LoginPage onLogin={handleLogin} />} />
+                    <Route path="/add-exam/:type" element={isLoggedIn ? <ExamFormPage /> : <LoginPage onLogin={handleLogin} />} />
+                    <Route path="/edit-exam/:examId" element={isLoggedIn ? <ExamFormPage /> : <LoginPage onLogin={handleLogin} />} />
                 </Routes>
             </main>
             <Footer />
