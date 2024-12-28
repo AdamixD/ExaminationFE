@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../styles/QuestionCard.css';
+import {updateQuestion} from '../../services/questionService';
+import {updateQuestionItem, createQuestionItem, deleteQuestionItem} from '../../services/questionItemService';
 
-const QuestionCard = ({ question, index, onUpdate, onDelete }) => {
-    const [localQuestion, setLocalQuestion] = useState({ ...question, scoringType: 'full', points: 3 });
+const QuestionCard = ({ question, index, token, onUpdate, onDelete }) => {
+    const [localQuestion, setLocalQuestion] = useState({ ...question });
     const [isEditing, setIsEditing] = useState(false);
     const [originalQuestion, setOriginalQuestion] = useState({ ...question });
+    const [itemsToDelete, setItemsToDelete] = useState([]);
+
+    useEffect(() => {
+        setItemsToDelete([]);
+    }, [question]);
 
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
@@ -44,7 +51,12 @@ const QuestionCard = ({ question, index, onUpdate, onDelete }) => {
             alert("Proszę najpierw uzupełnić wszystkie istniejące odpowiedzi.");
             return;
         }
-        const newAnswer = { text: '', correctness: false };
+        const newAnswer = {
+            text: '',
+            image: null,
+            correctness: false,
+            question_id: question.id,
+        };
         setLocalQuestion({
             ...localQuestion,
             question_items: [...localQuestion.question_items, newAnswer]
@@ -52,22 +64,42 @@ const QuestionCard = ({ question, index, onUpdate, onDelete }) => {
     };
 
     const handleRemoveAnswer = (idx) => {
+        const itemToRemove = localQuestion.question_items[idx];
+        if (itemToRemove && itemToRemove.id) {
+            setItemsToDelete([...itemsToDelete, itemToRemove.id]);
+        }
         const filteredAnswers = localQuestion.question_items.filter((_, index) => index !== idx);
         setLocalQuestion({ ...localQuestion, question_items: filteredAnswers });
     };
 
     const handleScoringChange = (type) => {
-        setLocalQuestion({ ...localQuestion, scoringType: type });
+        setLocalQuestion({ ...localQuestion, score_type: type });
     };
 
     const handlePointsChange = (e) => {
-        setLocalQuestion({ ...localQuestion, points: parseInt(e.target.value, 10) });
+        setLocalQuestion({ ...localQuestion, score: parseInt(e.target.value, 10) });
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        const updatedQuestion = handleQuestionTypeChange();
+        if (updatedQuestion.type === 'OPEN') {
+            updatedQuestion.score_type = "PROPORTIONAL"
+        }
         if (!validateForm()) return;
-        onUpdate(index, localQuestion);
-        setIsEditing(false);
+        try {
+            await updateQuestion(updatedQuestion.id, updatedQuestion, token);
+            await Promise.all([
+                ...updatedQuestion.question_items.map(item =>
+                    item.id ? updateQuestionItem(item.id, item, token) : createQuestionItem(item, token)
+                ),
+                ...itemsToDelete.map(id => deleteQuestionItem(id, token))
+            ]);
+            onUpdate(updatedQuestion);
+            setIsEditing(false);
+            setItemsToDelete([]);
+        } catch (error) {
+            console.error('Error updating question and items:', error);
+        }
     };
 
     const validateForm = () => {
@@ -82,15 +114,24 @@ const QuestionCard = ({ question, index, onUpdate, onDelete }) => {
         return true;
     };
 
-    const getQuestionType = () => {
-        const correctAnswers = localQuestion.question_items.filter(answer => answer.correctness).length;
-        if (localQuestion.question_items.length === 0) {
+    const determineQuestionType = (questionItems) => {
+        const correctAnswers = questionItems.filter(answer => answer.correctness).length;
+        if (questionItems.length === 0) {
             return 'OPEN';
         } else if (correctAnswers === 1) {
             return 'SINGLE';
         } else {
             return 'MULTI';
         }
+    };
+
+    const handleQuestionTypeChange = () => {
+        const newType = determineQuestionType(localQuestion.question_items);
+        return { ...localQuestion, type: newType };
+    };
+
+    const getQuestionType = () => {
+        return determineQuestionType(localQuestion.question_items);
     };
 
     const handleDelete = () => {
@@ -115,22 +156,25 @@ const QuestionCard = ({ question, index, onUpdate, onDelete }) => {
                     ))}
                     <button type="button" onClick={handleAddAnswer}>Dodaj odpowiedź</button>
                     <div>
+                        {getQuestionType() !== 'OPEN' ? (
+                            <label>
+                                <input
+                                    type="radio"
+                                    checked={localQuestion.score_type === 'FULL'}
+                                    onChange={() => handleScoringChange('FULL')}
+                                /> Pełna poprawność
+                            </label>
+                        ) : null
+                        }
                         <label>
                             <input
                                 type="radio"
-                                checked={localQuestion.scoringType === 'full'}
-                                onChange={() => handleScoringChange('full')}
-                            /> Pełna poprawność
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                checked={localQuestion.scoringType === 'proportional'}
-                                onChange={() => handleScoringChange('proportional')}
+                                checked={localQuestion.score_type === 'PROPORTIONAL'}
+                                onChange={() => handleScoringChange('PROPORTIONAL')}
                             /> Proporcjonalne
                         </label>
                     </div>
-                    <input type="number" value={localQuestion.points} onChange={handlePointsChange} min="1" />
+                    <input type="number" value={localQuestion.score} onChange={handlePointsChange} min="1" />
                     <div className="form-buttons">
                         <button type="button" onClick={handleSave} className="form-button">Zapisz</button>
                         <button type="button" onClick={handleToggleEdit} className="form-button">Anuluj</button>

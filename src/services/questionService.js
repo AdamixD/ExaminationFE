@@ -61,4 +61,3 @@ export const deleteQuestion = async (questionId, token) => {
         throw error;
     }
 };
-

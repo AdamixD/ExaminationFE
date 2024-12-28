@@ -19,7 +19,7 @@ const QuestionList = ({ examId, token }) => {
             setQuestions(data);
             setLoading(false);
         } catch (err) {
-            console.error('Error fetching exam questions', err);
+            console.error('Error fetching questions', err);
             setError(err.toString());
             setLoading(false);
         }
@@ -28,10 +28,10 @@ const QuestionList = ({ examId, token }) => {
     const handleDelete = async (questionId) => {
         try {
             await deleteQuestion(questionId, token);
-            const updatedQuestions = questions.filter(question => question.id !== questionId);
-            setQuestions(updatedQuestions);
+            setQuestions(questions.filter(question => question.id !== questionId));
         } catch (error) {
-            console.error('Failed to delete question', error);
+            console.error('Error deleting question', error);
+            alert('Error deleting question: ' + error.message);
         }
     };
 
@@ -50,10 +50,12 @@ const QuestionList = ({ examId, token }) => {
         <div className="question-list">
             {questions.map((question, index) => (
                 <QuestionCard
+                    index={index}
                     key={question.id}
                     question={question}
-                    index={index}
+                    token={token}
                     onDelete={() => handleDelete(question.id)}
+                    onUpdate={fetchQuestions}
                 />
             ))}
         </div>
