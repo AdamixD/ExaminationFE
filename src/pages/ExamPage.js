@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { getExamById } from '../services/examService';
-import { getExamQuestions } from '../services/questionService';
-import QuestionList from '../components/Exams/QuestionList';
+import QuestionList from '../components/Question/QuestionList';
 import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
 
@@ -11,7 +10,6 @@ const ExamPage = ({ token }) => {
     const { examId } = useParams();
     const navigate = useNavigate();
     const [exam, setExam] = useState(null);
-    const [examQuestions, setExamQuestions] = useState([]);
 
     useEffect(() => {
         getExamById(examId)
@@ -19,8 +17,6 @@ const ExamPage = ({ token }) => {
                 setExam(data);
                 return data.id;
             })
-            .then(examId => getExamQuestions(token, examId))
-            .then(setExamQuestions)
             .catch(console.error);
     }, [token, examId]);
 
@@ -70,8 +66,18 @@ const ExamPage = ({ token }) => {
                     <button onClick={handleEdit} className="exam-details-edit-button">Edytuj</button>
                 </div>
             </div>
-            <QuestionList questions={examQuestions}/>
-            {/*<StudentList students={exam.students} />*/}
+            <div className="exam-questions">
+                <header className="exam-questions-header">
+                    <h2>Pytania</h2>
+                </header>
+                <QuestionList examId={examId} token={token}/>
+            </div>
+            <div className="exam-students">
+                <header className="exam-students-header">
+                    <h2>Studenci</h2>
+                </header>
+                {/*<StudentList students={exam.students} />*/}
+            </div>
         </div>
     );
 };

@@ -49,3 +49,16 @@ export const getQuestionById = async (questionId, token) => {
         throw error;
     }
 };
+
+export const deleteQuestion = async (questionId, token) => {
+    try {
+        const response = await api.delete(`/${API_ROUTE}/${questionId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting question', error);
+        throw error;
+    }
+};
+
