@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { getExamById } from '../services/examService';
 import QuestionList from '../components/Question/QuestionList';
-import StudentList from '../components/Exams/StudentList';
+// import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
 
 const ExamPage = ({ token }) => {
