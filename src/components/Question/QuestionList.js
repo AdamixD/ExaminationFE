@@ -8,10 +8,6 @@ const QuestionList = ({ examId, token }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchQuestions();
-    }, [token, examId]);
-
     const fetchQuestions = async () => {
         setLoading(true);
         try {
@@ -25,11 +21,15 @@ const QuestionList = ({ examId, token }) => {
         }
     };
 
+    useEffect(() => {
+        fetchQuestions();
+    }, [token, examId]);
+
     const handleUpdateQuestions = () => {
         fetchQuestions();
     };
 
-    const handleDelete = async (questionId) => {
+    const handleDeleteQuestion = async (questionId) => {
         try {
             await deleteQuestion(questionId, token);
             setQuestions(questions.filter(question => question.id !== questionId));
@@ -49,28 +49,29 @@ const QuestionList = ({ examId, token }) => {
             </div>
         );
     }
-
-    return (
-        <div className="question-list">
-            {questions.map((question, index) => (
+    else {
+        return (
+            <div className="question-list">
+                {questions.map((question, index) => (
+                    <QuestionCard
+                        index={index}
+                        key={question.id}
+                        question={question}
+                        token={token}
+                        onDelete={() => handleDeleteQuestion(question.id)}
+                        onUpdate={handleUpdateQuestions}
+                        isNew={false}
+                    />
+                ))}
                 <QuestionCard
-                    index={index}
-                    key={question.id}
-                    question={question}
+                    question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
                     token={token}
-                    onDelete={() => handleDelete(question.id)}
                     onUpdate={handleUpdateQuestions}
-                    isNew={false}
+                    isNew={true}
                 />
-            ))}
-            <QuestionCard
-                question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
-                token={token}
-                onUpdate={handleUpdateQuestions}
-                isNew={true}
-            />
-        </div>
-    );
+            </div>
+        );
+    }
 };
 
 export default QuestionList;

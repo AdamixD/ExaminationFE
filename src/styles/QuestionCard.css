@@ -12,7 +12,42 @@
 .question-preview {
     cursor: pointer;
     padding: 10px;
+    font-size: 16px;
     width: 90%;
+}
+
+.question-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 4px 0;
+}
+
+.question-text {
+    width: 100%;
+    font-size: 16px;
+    height: 32px;
+}
+
+.question-type {
+    width: 232px;
+    font-size: 16px;
+    text-align: right;
+    padding: 4px 0;
+}
+
+.question-add-button {
+    background-color: var(--header-bg);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    width: 200px;
+    margin: 0 10px;
 }
 
 .question-details {
@@ -23,119 +58,121 @@
     flex-direction: column;
 }
 
-.answer {
-    display: flex;
-    margin-bottom: 10px;
+.question-score-type {
+    padding: 10px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100px;
 }
 
-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    width: 160px;
+.question-score-type-items {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 100px;
+    justify-content: center;
 }
 
-.answer-correctness-button {
-    width: 100px;
-    transition: background-color 0.3s;
-    flex: none;
-    margin: 5px;
-}
-
-.answer-correctness-button.true {
-    background-color: #28a745;
-}
-
-.answer-correctness-button.true:hover {
-    background-color: #218838;
-}
-
-.answer-correctness-button.false {
-    background-color: #dc3545;
-}
-
-.answer-correctness-button.false:hover {
-    background-color: #c82333;
-}
-
-.answer-delete-button {
-    width: 100px;
-    background-color: #007bff;
-    transition: background-color 0.3s;
-    flex: none;
-    margin: 5px 0 5px 5px;
-}
-
-.answer-delete-button:hover {
-    background-color: #0056b3;
-}
-
-.form-buttons {
-    margin-top: 15px;
-}
-
-.form-buttons button {
-    margin-right: 10px;
-    padding: 8px 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: opacity 0.3s;
-    width: 120px;
-}
-
-.form-buttons button:last-child {
-    background-color: #dc3545;
-}
-
-.form-buttons button:hover {
-    opacity: 0.85;
-}
-
-input[type="radio"] {
+.question-score-type-item {
+    margin-left: 10px;
     margin-right: 5px;
     font-size: 16px;
+    height: 16px;
 }
 
-input[type="text"] {
-    width: 100%;
+.question-score {
+    width: 100px;
     font-size: 16px;
-    height: auto;
-}
-
-textarea {
-    width: 100%;
-    height: auto;
-    padding: 0;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    display: flex;
-    margin-bottom: 10px;
-}
-
-input[type="number"] {
+    height: 20px;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
-    width: 100px;
+    margin: 0 10px;
 }
 
-.question-preview p {
-    margin: 0;
+.question-item {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 4px 0;
+    width: 100%;
+}
+
+.question-item-input-text {
+    width: 100%;
     font-size: 16px;
-    color: #333;
+    height: 32px;
+    padding: 4px 0;
+}
+
+.question-item-correctness-button {
+    width: 100px;
+    background-color: var(--header-bg);
+    transition: background-color 0.3s;
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 6px 15px;
+    margin: 5px;
+}
+
+.question-item-correctness-button.true {
+    background-color: #28a745;
+}
+
+.question-item-correctness-button.true:hover {
+    background-color: #218838;
+}
+
+.question-item-correctness-button.false {
+    background-color: #dc3545;
+}
+
+.question-item-correctness-button.false:hover {
+    background-color: #c82333;
+}
+
+.question-item-delete-button {
+    width: 100px;
+    color: white;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 6px 15px;
+    margin: 5px 0 5px 5px;
+}
+
+.question-form-buttons {
+    margin-top: 15px;
+}
+
+.question-item-form-button {
+    width: 160px;
+    background-color: var(--header-bg);
+    transition: background-color 0.3s;
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 6px 15px;
+    margin: 10px;
+}
+
+.question-item-form-button:last-child {
+    background-color: #dc3545;
+}
+
+.question-item-form-button:last-child:hover {
+    background-color: #c82333;
 }
 
 label {
     display: block;
-    margin-bottom: 10px;
     font-size: 16px;
 }
