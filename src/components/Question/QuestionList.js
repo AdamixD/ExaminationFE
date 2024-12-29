@@ -3,7 +3,7 @@ import QuestionCard from './QuestionCard';
 import { getExamQuestions, deleteQuestion } from '../../services/questionService';
 import '../../styles/QuestionList.css';
 
-const QuestionList = ({ examId, token }) => {
+const QuestionList = ({ examId, examType, token }) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -46,6 +46,13 @@ const QuestionList = ({ examId, token }) => {
         return (
             <div className="question-list">
                 <p>Brak zdefiniowanych pytań dla tego egzaminu.</p>
+                <QuestionCard
+                    question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
+                    examType={examType}
+                    token={token}
+                    onUpdate={handleUpdateQuestions}
+                    isNew={true}
+                />
             </div>
         );
     }
@@ -57,6 +64,7 @@ const QuestionList = ({ examId, token }) => {
                         index={index}
                         key={question.id}
                         question={question}
+                        examType={examType}
                         token={token}
                         onDelete={() => handleDeleteQuestion(question.id)}
                         onUpdate={handleUpdateQuestions}
@@ -65,6 +73,7 @@ const QuestionList = ({ examId, token }) => {
                 ))}
                 <QuestionCard
                     question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
+                    examType={examType}
                     token={token}
                     onUpdate={handleUpdateQuestions}
                     isNew={true}

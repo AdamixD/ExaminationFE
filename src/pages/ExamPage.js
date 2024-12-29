@@ -50,7 +50,7 @@ const ExamPage = ({ token }) => {
             </header>
             <div className="exam-details">
                 <div className="exam-details-info">
-                    <p>Rodzaj: {exam.type}</p>
+                    <p>Rodzaj: {exam.type === "TEST" ? ('Test') : ('Projekt')}</p>
                     <p>Data rozpoczęcia: {moment(exam.start_date).format('DD-MM-YYYY HH:mm:ss')}</p>
                     <p>Data zakończenia: {moment(exam.end_date).format('DD-MM-YYYY HH:mm:ss')}</p>
                     {exam.type === 'TEST' && (
@@ -68,9 +68,13 @@ const ExamPage = ({ token }) => {
             </div>
             <div className="exam-questions">
                 <header className="exam-questions-header">
-                    <h2>Pytania</h2>
+                    {exam.type === "TEST" ? (
+                        <h2>Pytania</h2>
+                    ) : (
+                        <h2>Zadania</h2>
+                    )}
                 </header>
-                <QuestionList examId={examId} token={token}/>
+                <QuestionList examId={examId} examType={exam.type} token={token}/>
             </div>
             <div className="exam-students">
                 <header className="exam-students-header">

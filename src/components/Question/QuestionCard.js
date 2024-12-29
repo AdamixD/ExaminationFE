@@ -3,7 +3,7 @@ import '../../styles/QuestionCard.css';
 import {updateQuestion, createQuestion} from '../../services/questionService';
 import {updateQuestionItem, createQuestionItem, deleteQuestionItem} from '../../services/questionItemService';
 
-const QuestionCard = ({ question, index, token, onUpdate, onDelete, isNew }) => {
+const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, isNew }) => {
     const [localQuestion, setLocalQuestion] = useState({ ...question });
     const [isEditing, setIsEditing] = useState(false);
     const [originalQuestion, setOriginalQuestion] = useState({ ...question });
@@ -180,58 +180,38 @@ const QuestionCard = ({ question, index, token, onUpdate, onDelete, isNew }) => 
                 {isEditing ? (
                     <form onSubmit={e => e.preventDefault()} className="question-details">
                         <div className="question-header">
-                            <input type="text" value={localQuestion.text} onChange={handleQuestionTextChange}
-                                   className="question-text"/>
+                            <input type="text" value={localQuestion.text} onChange={handleQuestionTextChange} className="question-text"/>
                             <div className="question-type">{getFormatedQuestionType(getQuestionType())}</div>
                         </div>
-                        {localQuestion.question_items.map((questionItem, idx) => (
-                            <div key={idx} className="question-item">
-                                <input type="text" value={questionItem.text}
-                                       onChange={(e) => handleQuestionItemChange(e.target.value, idx)}
-                                       className="question-item-input-text"/>
-                                <button type="button" onClick={() => handleQuestionCorrectnessChange(idx)}
-                                        className={`question-item-correctness-button ${questionItem.correctness ? 'true' : 'false'}`}>{questionItem.correctness ? 'Prawda' : 'Fałsz'}</button>
-                                <button type="button" onClick={() => handleRemoveQuestionItem(idx)}
-                                        className="question-item-delete-button">Usuń
-                                </button>
+                        {examType === "TEST" && (
+                            <div>
+                                <div>
+                                    {localQuestion.question_items.map((questionItem, idx) => (
+                                        <div key={idx} className="question-item">
+                                            <input type="text" value={questionItem.text} onChange={(e) => handleQuestionItemChange(e.target.value, idx)} className="question-item-input-text"/>
+                                            <button type="button" onClick={() => handleQuestionCorrectnessChange(idx)} className={`question-item-correctness-button ${questionItem.correctness ? 'true' : 'false'}`}>{questionItem.correctness ? 'Prawda' : 'Fałsz'}</button>
+                                            <button type="button" onClick={() => handleRemoveQuestionItem(idx)} className="question-item-delete-button">Usuń</button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <button type="button" onClick={handleAddQuestionItem} className="question-item-form-button">Dodaj odpowiedź</button>
                             </div>
-                        ))}
-                        <button type="button" onClick={handleAddQuestionItem} className="question-item-form-button">Dodaj odpowiedź</button>
+                        )}
                         <div className="question-score-type">
                             <label>Ocenianie</label>
                             <div className="question-score-type-items">
                                 {getQuestionType() !== 'OPEN' ? (
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            checked={localQuestion.score_type === 'FULL'}
-                                            onChange={() => handleQuestionScoreTypeChange('FULL')}
-                                            className="question-score-type-item"
-                                        /> Pełna poprawność
-                                    </label>
-                                ) : null
+                                    <label><input type="radio" checked={localQuestion.score_type === 'FULL'} onChange={() => handleQuestionScoreTypeChange('FULL')} className="question-score-type-item"/> Pełna poprawność</label>
+                                    ) : null
                                 }
-                                <label>
-                                    <input
-                                        type="radio"
-                                        checked={localQuestion.score_type === 'PROPORTIONAL'}
-                                        onChange={() => handleQuestionScoreTypeChange('PROPORTIONAL')}
-                                        className="question-score-type-item"
-                                    /> Proporcjonalne
-                                </label>
+                                <label><input type="radio" checked={localQuestion.score_type === 'PROPORTIONAL'} onChange={() => handleQuestionScoreTypeChange('PROPORTIONAL')} className="question-score-type-item"/> Proporcjonalne</label>
                             </div>
                         </div>
                         <label>Liczba punktów: <input type="number" value={localQuestion.score} onChange={handleQuestionScoreChange} min="1" className="question-score"/></label>
                         <div className="question-form-buttons">
-                            <button type="button" onClick={handleQuestionSave}
-                                    className="question-item-form-button">Zapisz
-                            </button>
-                            <button type="button" onClick={handleToggleEdit}
-                                    className="question-item-form-button">Anuluj
-                            </button>
-                            <button type="button" onClick={handleQuestionDelete}
-                                    className="question-item-form-button">Usuń
-                            </button>
+                            <button type="button" onClick={handleQuestionSave} className="question-item-form-button">Zapisz</button>
+                            <button type="button" onClick={handleToggleEdit} className="question-item-form-button">Anuluj</button>
+                            <button type="button" onClick={handleQuestionDelete} className="question-item-form-button">Usuń</button>
                         </div>
                     </form>
                 ) : (
