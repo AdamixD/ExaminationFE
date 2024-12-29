@@ -184,8 +184,8 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
                             <div className="question-type">{getFormatedQuestionType(getQuestionType())}</div>
                         </div>
                         {examType === "TEST" && (
-                            <div>
-                                <div>
+                            <div className="question-items-form">
+                                <div className="question-items">
                                     {localQuestion.question_items.map((questionItem, idx) => (
                                         <div key={idx} className="question-item">
                                             <input type="text" value={questionItem.text} onChange={(e) => handleQuestionItemChange(e.target.value, idx)} className="question-item-input-text"/>
@@ -194,7 +194,7 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
                                         </div>
                                     ))}
                                 </div>
-                                <button type="button" onClick={handleAddQuestionItem} className="question-item-form-button">Dodaj odpowiedź</button>
+                                <button type="button" onClick={handleAddQuestionItem} className="question-items-form-button">Dodaj odpowiedź</button>
                             </div>
                         )}
                         <div className="question-score-type">
@@ -209,9 +209,9 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
                         </div>
                         <label>Liczba punktów: <input type="number" value={localQuestion.score} onChange={handleQuestionScoreChange} min="1" className="question-score"/></label>
                         <div className="question-form-buttons">
-                            <button type="button" onClick={handleQuestionSave} className="question-item-form-button">Zapisz</button>
-                            <button type="button" onClick={handleToggleEdit} className="question-item-form-button">Anuluj</button>
-                            <button type="button" onClick={handleQuestionDelete} className="question-item-form-button">Usuń</button>
+                            <button type="button" onClick={handleQuestionSave} className="question-form-button">Zapisz</button>
+                            <button type="button" onClick={handleToggleEdit} className="question-form-button">Anuluj</button>
+                            <button type="button" onClick={handleQuestionDelete} className="question-form-button">Usuń</button>
                         </div>
                     </form>
                 ) : (

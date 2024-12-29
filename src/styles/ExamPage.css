@@ -29,7 +29,14 @@
     padding: 0 10px;
 }
 
-.exam-details-edit-button {
+.exam-details-buttons {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.exam-details-button {
     background-color: var(--header-bg);
     color: white;
     border: none;
@@ -39,7 +46,15 @@
     font-size: 16px;
     transition: background-color 0.3s;
     width: 200px;
-    margin: 0 10px;
+    margin: 10px 10px;
+}
+
+.exam-details-button.delete {
+    background-color: #dc3545;
+}
+
+.exam-details-button.delete:hover {
+    background-color: #c82333;
 }
 
 .exam-questions {

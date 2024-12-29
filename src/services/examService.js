@@ -38,6 +38,18 @@ export const updateExam = async (examId, examData, token) => {
     }
 };
 
+export const deleteExam = async (examId, token) => {
+    try {
+        const response = await api.delete(`/${API_ROUTE}/${examId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting exam', error);
+        throw error;
+    }
+};
+
 export const getExamById = async (examId, token) => {
     try {
         const response = await api.get(`/${API_ROUTE}/${examId}`, {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { getExamById } from '../services/examService';
+import { getExamById, deleteExam } from '../services/examService';
 import QuestionList from '../components/Question/QuestionList';
 // import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
@@ -20,11 +20,33 @@ const ExamPage = ({ token }) => {
             .catch(console.error);
     }, [token, examId]);
 
-    const handleEdit = () => {
-        navigate(`/exam/edit/${exam.type.toString().toLowerCase()}/${examId}`);
+    const handleAssignExam = () => {};
+
+    const handleEditExam = () => {
+        if (exam.status === 'UNDEFINED') {
+            navigate(`/exam/edit/${exam.type.toString().toLowerCase()}/${examId}`);
+        } else {
+            alert(`Edytowanie ${exam.type === "TEST" ? ('testu') : ('projektu')} możliwe jest przed jego przypisaniem, rozpoczęciem i zakończeniem.`);
+        }
     };
 
-    const formatStatus = (status) => {
+    const handleDeleteExam = async () => {
+        try {
+            if (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') {
+                if (window.confirm("Czy na pewno chcesz usunąć to pytanie?")) {
+                    await deleteExam(examId, token);
+                    navigate(`/exams`);
+                }
+            } else {
+                alert(`Usunięcie ${exam.type === "TEST" ? ('testu') : ('projektu')} możliwe jest przed jego rozpoczęciem i zakończeniem.`);
+            }
+        } catch (error) {
+            console.error('Error deleting exam', error);
+            alert('Error deleting exam: ' + error.message);
+        }
+    };
+
+    const formatExamStatus = (status) => {
         if (status === 'UNDEFINED') {
             return 'W trakcie edycji'
         }
@@ -60,10 +82,12 @@ const ExamPage = ({ token }) => {
                         </>
                     )}
                     <p>Liczba punktów: {exam.max_points}</p>
-                    <p>Status: {formatStatus(exam.status)}</p>
+                    <p>Status: {formatExamStatus(exam.status)}</p>
                 </div>
-                <div className="exam-details-edit">
-                    <button onClick={handleEdit} className="exam-details-edit-button">Edytuj</button>
+                <div className="exam-details-buttons">
+                    <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
+                    <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
+                    <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
                 </div>
             </div>
             <div className="exam-questions">
