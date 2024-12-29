@@ -25,6 +25,10 @@ const QuestionList = ({ examId, token }) => {
         }
     };
 
+    const handleUpdateQuestions = () => {
+        fetchQuestions();
+    };
+
     const handleDelete = async (questionId) => {
         try {
             await deleteQuestion(questionId, token);
@@ -55,9 +59,16 @@ const QuestionList = ({ examId, token }) => {
                     question={question}
                     token={token}
                     onDelete={() => handleDelete(question.id)}
-                    onUpdate={fetchQuestions}
+                    onUpdate={handleUpdateQuestions}
+                    isNew={false}
                 />
             ))}
+            <QuestionCard
+                question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
+                token={token}
+                onUpdate={handleUpdateQuestions}
+                isNew={true}
+            />
         </div>
     );
 };

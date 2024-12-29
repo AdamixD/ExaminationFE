@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/QuestionCard.css';
-import {updateQuestion} from '../../services/questionService';
+import {updateQuestion, createQuestion} from '../../services/questionService';
 import {updateQuestionItem, createQuestionItem, deleteQuestionItem} from '../../services/questionItemService';
 
-const QuestionCard = ({ question, index, token, onUpdate, onDelete }) => {
+const QuestionCard = ({ question, index, token, onUpdate, onDelete, isNew }) => {
     const [localQuestion, setLocalQuestion] = useState({ ...question });
     const [isEditing, setIsEditing] = useState(false);
     const [originalQuestion, setOriginalQuestion] = useState({ ...question });
@@ -11,7 +11,11 @@ const QuestionCard = ({ question, index, token, onUpdate, onDelete }) => {
 
     useEffect(() => {
         setItemsToDelete([]);
-    }, [question]);
+        if (isNew) {
+            setLocalQuestion(question);
+            setIsEditing(false);
+        }
+    }, [question, isNew]);
 
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
@@ -83,22 +87,35 @@ const QuestionCard = ({ question, index, token, onUpdate, onDelete }) => {
     const handleSave = async () => {
         const updatedQuestion = handleQuestionTypeChange();
         if (updatedQuestion.type === 'OPEN') {
-            updatedQuestion.score_type = "PROPORTIONAL"
+            updatedQuestion.score_type = "PROPORTIONAL";
         }
         if (!validateForm()) return;
+
         try {
-            await updateQuestion(updatedQuestion.id, updatedQuestion, token);
+            let currentQuestion;
+            if (isNew) {
+                currentQuestion = await createQuestion(updatedQuestion, token);
+            } else {
+                currentQuestion = await updateQuestion(updatedQuestion.id, updatedQuestion, token);
+            }
+
+            currentQuestion.question_items = updatedQuestion.question_items;
+
             await Promise.all([
-                ...updatedQuestion.question_items.map(item =>
-                    item.id ? updateQuestionItem(item.id, item, token) : createQuestionItem(item, token)
+                ...currentQuestion.question_items.map(item =>
+                    item.id ? updateQuestionItem(item.id, item, token) : createQuestionItem({ ...item, question_id: currentQuestion.id }, token)
                 ),
                 ...itemsToDelete.map(id => deleteQuestionItem(id, token))
             ]);
-            onUpdate(updatedQuestion);
+
+            onUpdate(currentQuestion);
             setIsEditing(false);
             setItemsToDelete([]);
+            if (isNew) {
+                setLocalQuestion({ text: '', question_items: [] });
+            }
         } catch (error) {
-            console.error('Error updating question and items:', error);
+            console.error('Error saving question:', error);
         }
     };
 
@@ -140,55 +157,67 @@ const QuestionCard = ({ question, index, token, onUpdate, onDelete }) => {
         }
     };
 
-    return (
-        <div className="question-card">
-            {isEditing ? (
-                <form onSubmit={e => e.preventDefault()} className="question-details">
-                    <textarea value={localQuestion.text} onChange={handleTextChange} />
-                    {localQuestion.question_items.map((answer, idx) => (
-                        <div key={idx} className="answer">
-                            <input type="text" value={answer.text} onChange={(e) => handleAnswerChange(e.target.value, idx)}/>
-                            <button type="button" onClick={() => handleToggleCorrect(idx)} className={`answer-correctness-button ${answer.correctness ? 'true' : 'false'}`}>
-                                {answer.correctness ? 'Prawda' : 'Fałsz'}
-                            </button>
-                            <button type="button" onClick={() => handleRemoveAnswer(idx)} className="answer-delete-button">Usuń</button>
-                        </div>
-                    ))}
-                    <button type="button" onClick={handleAddAnswer}>Dodaj odpowiedź</button>
-                    <div>
-                        {getQuestionType() !== 'OPEN' ? (
+    if (isNew && !isEditing) {
+        return (
+            <button type="button" onClick={handleToggleEdit} className="form-button">Dodaj pytanie</button>
+        )
+    }
+    else {
+
+        return (
+            <div className="question-card">
+                {isEditing ? (
+                    <form onSubmit={e => e.preventDefault()} className="question-details">
+                        <textarea value={localQuestion.text} onChange={handleTextChange}/>
+                        {localQuestion.question_items.map((answer, idx) => (
+                            <div key={idx} className="answer">
+                                <input type="text" value={answer.text}
+                                       onChange={(e) => handleAnswerChange(e.target.value, idx)}/>
+                                <button type="button" onClick={() => handleToggleCorrect(idx)}
+                                        className={`answer-correctness-button ${answer.correctness ? 'true' : 'false'}`}>
+                                    {answer.correctness ? 'Prawda' : 'Fałsz'}
+                                </button>
+                                <button type="button" onClick={() => handleRemoveAnswer(idx)}
+                                        className="answer-delete-button">Usuń
+                                </button>
+                            </div>
+                        ))}
+                        <button type="button" onClick={handleAddAnswer}>Dodaj odpowiedź</button>
+                        <div>
+                            {getQuestionType() !== 'OPEN' ? (
+                                <label>
+                                    <input
+                                        type="radio"
+                                        checked={localQuestion.score_type === 'FULL'}
+                                        onChange={() => handleScoringChange('FULL')}
+                                    /> Pełna poprawność
+                                </label>
+                            ) : null
+                            }
                             <label>
                                 <input
                                     type="radio"
-                                    checked={localQuestion.score_type === 'FULL'}
-                                    onChange={() => handleScoringChange('FULL')}
-                                /> Pełna poprawność
+                                    checked={localQuestion.score_type === 'PROPORTIONAL'}
+                                    onChange={() => handleScoringChange('PROPORTIONAL')}
+                                /> Proporcjonalne
                             </label>
-                        ) : null
-                        }
-                        <label>
-                            <input
-                                type="radio"
-                                checked={localQuestion.score_type === 'PROPORTIONAL'}
-                                onChange={() => handleScoringChange('PROPORTIONAL')}
-                            /> Proporcjonalne
-                        </label>
+                        </div>
+                        <input type="number" value={localQuestion.score} onChange={handlePointsChange} min="1"/>
+                        <div className="form-buttons">
+                            <button type="button" onClick={handleSave} className="form-button">Zapisz</button>
+                            <button type="button" onClick={handleToggleEdit} className="form-button">Anuluj</button>
+                            <button type="button" onClick={handleDelete} className="form-button-delete">Usuń</button>
+                        </div>
+                        <p>Typ pytania: {getQuestionType()}</p>
+                    </form>
+                ) : (
+                    <div onClick={handleToggleEdit} className="question-preview">
+                        {index + 1}. {localQuestion.text} (Typ: {getQuestionType()})
                     </div>
-                    <input type="number" value={localQuestion.score} onChange={handlePointsChange} min="1" />
-                    <div className="form-buttons">
-                        <button type="button" onClick={handleSave} className="form-button">Zapisz</button>
-                        <button type="button" onClick={handleToggleEdit} className="form-button">Anuluj</button>
-                        <button type="button" onClick={handleDelete} className="form-button-delete">Usuń</button>
-                    </div>
-                    <p>Typ pytania: {getQuestionType()}</p>
-                </form>
-            ) : (
-                <div onClick={handleToggleEdit} className="question-preview">
-                    {index + 1}. {localQuestion.text} (Typ: {getQuestionType()})
-                </div>
-            )}
-        </div>
-    );
+                )}
+            </div>
+        );
+    }
 };
 
 export default QuestionCard;
