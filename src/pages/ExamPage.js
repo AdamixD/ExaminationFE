@@ -112,7 +112,7 @@ const ExamPage = ({ token }) => {
                 { (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') ?
                     (
                         <div className="exam-details-buttons">
-                            <button onClick={handleAssignExam} className="exam-details-button">Edytuj</button>
+                            <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
                             <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
                             <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
                         </div>
