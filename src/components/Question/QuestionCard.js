@@ -174,7 +174,6 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
         )
     }
     else {
-
         return (
             <div className="question-card">
                 {isEditing ? (
