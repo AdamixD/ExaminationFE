@@ -2,6 +2,7 @@ import api from './api';
 
 const API_ROUTE = 'auth';
 
+
 export const login = async (email, password) => {
    try {
        const response = await api.post(

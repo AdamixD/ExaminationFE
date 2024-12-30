@@ -2,6 +2,7 @@ import api from './api';
 
 const API_ROUTE = 'course_realizations';
 
+
 export const getUserCourses = async (token) => {
     try {
         const response = await api.get(`/${API_ROUTE}/user`, {

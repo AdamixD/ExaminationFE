@@ -19,7 +19,7 @@ const ExamsPage = ({ token }) => {
 
         const fetchUserExams = async () => {
             try {
-                const data = await getUserExams(token, courseId);
+                const data = await getUserExams(courseId, token);
                 setExams(data);
             } catch (err) {
                 setError("Nie udało się pobrać egzaminów.");
@@ -27,7 +27,7 @@ const ExamsPage = ({ token }) => {
         };
 
         fetchUserExams();
-    }, [token, courseId]);
+    }, [courseId, token]);
 
     const handleAddExam = (type) => {
         navigate(`/exam/add/${type}`);

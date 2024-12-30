@@ -11,7 +11,7 @@ const QuestionList = ({ examId, examType, token }) => {
     const fetchQuestions = async () => {
         setLoading(true);
         try {
-            const data = await getExamQuestions(token, examId);
+            const data = await getExamQuestions(examId, token);
             setQuestions(data);
             setLoading(false);
         } catch (err) {
@@ -23,7 +23,7 @@ const QuestionList = ({ examId, examType, token }) => {
 
     useEffect(() => {
         fetchQuestions();
-    }, [token, examId]);
+    }, [examId, token]);
 
     const handleUpdateQuestions = () => {
         fetchQuestions();

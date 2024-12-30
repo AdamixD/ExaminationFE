@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { getExamById, deleteExam } from '../services/examService';
+import { getExam, deleteExam, assignExam } from '../services/examService';
 import QuestionList from '../components/Question/QuestionList';
 // import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
@@ -10,17 +10,42 @@ const ExamPage = ({ token }) => {
     const { examId } = useParams();
     const navigate = useNavigate();
     const [exam, setExam] = useState(null);
+    const [reloadKey, setReloadKey] = useState(0);
 
     useEffect(() => {
-        getExamById(examId)
+        getExam(examId)
             .then(data => {
                 setExam(data);
                 return data.id;
             })
             .catch(console.error);
-    }, [token, examId]);
+    }, [token, examId, reloadKey]);
 
-    const handleAssignExam = () => {};
+    const handleAssignExam = async () => {
+        try {
+            if (exam.status === 'UNDEFINED') {
+                if (window.confirm(`Czy na pewno chcesz przypisać ${exam.type === "TEST" ? 'test' : 'projekt'}?`)) {
+                    await assignExam(examId);
+                    setReloadKey(prevKey => prevKey + 1);
+                    alert('Przypisanie zakończyło się pomyślnie.');
+                }
+            } else if (exam.status === 'ASSIGNED') {
+                if (window.confirm(`Czy na pewno chcesz ponownie przypisać ${exam.type === "TEST" ? 'test' : 'projekt'}?`)) {
+                    await assignExam(examId);
+                    setReloadKey(prevKey => prevKey + 1);
+                    alert('Przypisanie zakończyło się pomyślnie.');
+                }
+            } else {
+                alert(`Ponowne przypisanie aktywnego lub zakończonego ${exam.type === "TEST" ? 'testu' : 'projektu'} nie jest możliwe.`);
+            }
+        } catch (error) {
+            if (error.response.status === 400) {
+                alert('Liczba zdefiniowanych pytań jest mniejsza niż zadeklarowana.');
+            } else {
+                alert('Error assigning exam: ' + (error.message || 'Unknown error'));
+            }
+        }
+    };
 
     const handleEditExam = () => {
         if (exam.status === 'UNDEFINED') {
@@ -33,7 +58,7 @@ const ExamPage = ({ token }) => {
     const handleDeleteExam = async () => {
         try {
             if (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') {
-                if (window.confirm("Czy na pewno chcesz usunąć to pytanie?")) {
+                if (window.confirm(`Czy na pewno chcesz usunąć ten ${exam.type === 'TEST' ? 'test' : 'projekt'}?`)) {
                     await deleteExam(examId, token);
                     navigate(`/exams`);
                 }
@@ -50,8 +75,8 @@ const ExamPage = ({ token }) => {
         if (status === 'UNDEFINED') {
             return 'W trakcie edycji'
         }
-        else if (status === 'SCHEDULED') {
-            return 'Zaplanowany'
+        else if (status === 'ASSIGNED') {
+            return 'Przypisany'
         }
         else if (status === 'ACTIVE') {
             return 'Aktywny'
@@ -84,11 +109,15 @@ const ExamPage = ({ token }) => {
                     <p>Liczba punktów: {exam.max_points}</p>
                     <p>Status: {formatExamStatus(exam.status)}</p>
                 </div>
-                <div className="exam-details-buttons">
-                    <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
-                    <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
-                    <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
-                </div>
+                { (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') ?
+                    (
+                        <div className="exam-details-buttons">
+                            <button onClick={handleAssignExam} className="exam-details-button">Edytuj</button>
+                            <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
+                            <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
+                        </div>
+                    ) : null
+                }
             </div>
             <div className="exam-questions">
                 <header className="exam-questions-header">

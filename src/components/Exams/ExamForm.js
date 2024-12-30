@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createExam, updateExam, getExamById } from '../../services/examService';
+import { createExam, updateExam, getExam } from '../../services/examService';
 import '../../styles/ExamForm.css';
 
 const ExamForm = () => {
@@ -22,7 +22,7 @@ const ExamForm = () => {
 
     useEffect(() => {
         if (isEditing) {
-            getExamById(examId).then(data => {
+            getExam(examId).then(data => {
                 setFormData({
                     title: data.title,
                     startDate: formatDate(data.start_date),

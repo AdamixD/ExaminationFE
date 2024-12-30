@@ -2,6 +2,7 @@ import api from './api';
 
 const API_ROUTE = 'question_items';
 
+
 export const createQuestionItem = async (questionItemData, token) => {
     console.log(questionItemData);
     try {
@@ -38,4 +39,3 @@ export const deleteQuestionItem = async (questionItemId, token) => {
         throw error;
     }
 };
-

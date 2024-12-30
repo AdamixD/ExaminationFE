@@ -2,17 +2,6 @@ import api from './api';
 
 const API_ROUTE = 'questions';
 
-export const getExamQuestions = async (token, exam_id) => {
-    try {
-        const response = await api.get(`/${API_ROUTE}/exam/${exam_id}`, {
-            headers: { Authorization: `Bearer ${token}`},
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching exam questions', error);
-        throw error;
-    }
-};
 
 export const createQuestion = async (questionData, token) => {
     try {
@@ -38,18 +27,6 @@ export const updateQuestion = async (questionId, questionData, token) => {
     }
 };
 
-export const getQuestionById = async (questionId, token) => {
-    try {
-        const response = await api.get(`/${API_ROUTE}/${questionId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching question details', error);
-        throw error;
-    }
-};
-
 export const deleteQuestion = async (questionId, token) => {
     try {
         const response = await api.delete(`/${API_ROUTE}/${questionId}`, {
@@ -58,6 +35,18 @@ export const deleteQuestion = async (questionId, token) => {
         return response.data;
     } catch (error) {
         console.error('Error deleting question', error);
+        throw error;
+    }
+};
+
+export const getExamQuestions = async (exam_id, token) => {
+    try {
+        const response = await api.get(`/${API_ROUTE}/exam/${exam_id}`, {
+            headers: { Authorization: `Bearer ${token}`},
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching exam questions', error);
         throw error;
     }
 };
