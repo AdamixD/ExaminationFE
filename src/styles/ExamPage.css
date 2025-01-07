@@ -63,14 +63,26 @@
     align-items: center;
     width: 100%;
     text-align: left;
-    margin: 20px;
+    /* margin: 20px; */
     padding: 10px 10px;
 }
 
 .exam-questions-header {
-    text-align: left;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    width: 92%;
+    /* margin-top: 15px; */
 }
+
+.exam-questions-name {
+    width: 85%;
+}
+
+.exam-points {
+    text-align: right;
+    width: 8%;
+}
+
 
 .exam-students {
     display: flex;
@@ -90,4 +102,16 @@
 .exam-page p {
     font-size: 16px;
     color: #666;
+}
+
+.exam-end-button {
+    width: 180px;
+    background-color: var(--header-bg);
+    transition: background-color 0.3s;
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 6px 15px;
 }

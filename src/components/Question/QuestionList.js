@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import QuestionCard from './QuestionCard';
+import StudentQuestionCard from './StudentQuestionCard';
 import { getExamQuestions, deleteQuestion } from '../../services/questionService';
 import '../../styles/QuestionList.css';
 
-const QuestionList = ({ examId, examType, token }) => {
+const QuestionList = ({ examId, examType, token, handleSaveQuestion }) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const userRole = localStorage.getItem('userRole');
 
     const fetchQuestions = async () => {
         setLoading(true);
@@ -23,12 +25,12 @@ const QuestionList = ({ examId, examType, token }) => {
 
     useEffect(() => {
         fetchQuestions();
-    }, [examId, token]);
+    }, [examId, token,]);
 
     const handleUpdateQuestions = () => {
         fetchQuestions();
     };
-
+    
     const handleDeleteQuestion = async (questionId) => {
         try {
             await deleteQuestion(questionId, token);
@@ -46,38 +48,48 @@ const QuestionList = ({ examId, examType, token }) => {
         return (
             <div className="question-list">
                 <p>Brak zdefiniowanych pytań dla tego egzaminu.</p>
-                <QuestionCard
+                {(userRole === "LECTURER") && (<QuestionCard
                     question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
                     examType={examType}
                     token={token}
                     onUpdate={handleUpdateQuestions}
                     isNew={true}
-                />
+                />)}
             </div>
         );
     }
     else {
         return (
             <div className="question-list">
-                {questions.map((question, index) => (
-                    <QuestionCard
-                        index={index}
-                        key={question.id}
-                        question={question}
-                        examType={examType}
-                        token={token}
-                        onDelete={() => handleDeleteQuestion(question.id)}
-                        onUpdate={handleUpdateQuestions}
-                        isNew={false}
-                    />
-                ))}
-                <QuestionCard
+                {(userRole === "LECTURER") ? 
+                    questions.map((question, index) => (
+                        <QuestionCard
+                            index={index}
+                            key={question.id}
+                            question={question}
+                            examType={examType}
+                            token={token}
+                            onDelete={() => handleDeleteQuestion(question.id)}
+                            onUpdate={handleUpdateQuestions}
+                            isNew={false}
+                        />)) :
+                    questions.map((question, index) => (
+                        <StudentQuestionCard
+                            index={index}
+                            key={question.id}
+                            question={question}
+                            examType={examType}
+                            token={token}
+                            onSave={handleSaveQuestion}
+                        />))
+                }
+                {(userRole === "LECTURER") && <QuestionCard
                     question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
                     examType={examType}
                     token={token}
                     onUpdate={handleUpdateQuestions}
                     isNew={true}
-                />
+                />}
             </div>
         );
     }
