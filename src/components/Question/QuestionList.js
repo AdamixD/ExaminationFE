@@ -47,7 +47,7 @@ const QuestionList = ({ examId, examType, token, handleSaveQuestion }) => {
     if (questions.length === 0) {
         return (
             <div className="question-list">
-                <p>Brak zdefiniowanych pytań dla tego egzaminu.</p>
+                <p>Brak zdefiniowanych {examType === "TEST" ? "pytań" : "zadań"} dla tego egzaminu.</p>
                 {(userRole === "LECTURER") && (<QuestionCard
                     question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
                     examType={examType}

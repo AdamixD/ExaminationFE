@@ -3,11 +3,11 @@ import '../../styles/StudentQuestionCard.css';
 import { createAnswer, updateAnswer } from '../../services/studentQuestionService';
 
 const StudentQuestionCard = ({ index, question, examType, token, onSave}) => {
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(true);
     const [answers, setAnswers] = useState(Array(question.question_items.length).fill(false));
     const [openAnswer, setOpenAnswer] = useState("");
     const [isAnswered, setIsAnswered] = useState(false);
-    const [answerID, setAnswerID] = useState(1);
+    const [answerID, setAnswerID] = useState(null);
 
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
@@ -44,8 +44,8 @@ const StudentQuestionCard = ({ index, question, examType, token, onSave}) => {
         let answerData = {score: 0, comment: null, answer: answer, exam_student_id: 3, question_id: question.id};
         if (!isAnswered)
         {
-            let data = createAnswer(answerData);
-            console.info(data);
+            let answer_id = await createAnswer(answerData);
+            setAnswerID(answer_id);
             setIsAnswered(true);
             onSave();
         }
