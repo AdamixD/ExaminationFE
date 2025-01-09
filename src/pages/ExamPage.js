@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { getExam, deleteExam, assignExam } from '../services/examService';
+import { getExam, deleteExam, assignExam, updateExam } from '../services/examService';
 import QuestionList from '../components/Question/QuestionList';
 // import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
@@ -90,6 +90,9 @@ const ExamPage = ({ token }) => {
     };
 
     const handleSaveAndExit = async () => {
+        await updateExam(examId, {...exam, status: "CLOSED" });
+        console.info("ok")
+        navigate(`/exams`);
     };
 
     const handleSaveQuestion = async () => {
@@ -106,13 +109,13 @@ const ExamPage = ({ token }) => {
                 <h2>{exam.title}</h2>
             </header>
             {userRole === 'STUDENT' ?
-                moment(Date()) <= moment(exam.end_date) || true ? //todo - wywalić || true na koniec testów
+                (moment(Date()) <= moment(exam.end_date) && exam.status !== "CLOSED")  ? //todo - wywalić || true na koniec testów
                     moment(Date()) >= moment(exam.start_date) ?
                         <>
                             <div className="exam-questions">
                                 <h2 className="exam-questions-header">
                                     <div className="exam-questions-name">{exam.type === "TEST" ? "Pytania" : "Zadania"}</div>
-                                    <Countdown daysInHours={true} date={moment(exam.end_date)} />
+                                    <Countdown daysInHours={true} date={moment(exam.end_date)} onComplete={handleSaveAndExit}/>
                                     <div className="exam-points"> {nAnswearedQuestions}/{exam.questions_quantity}</div>
                                 </h2>
                                 <QuestionList examId={examId} examType={exam.type} token={token} handleSaveQuestion={handleSaveQuestion}/>
