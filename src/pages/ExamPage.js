@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { getExam, deleteExam, assignExam } from '../services/examService';
+import { getExam, deleteExam, assignExam, updateExam } from '../services/examService';
 import { getExamStudents } from '../services/examStudentsService';
 import QuestionList from '../components/Question/QuestionList';
 import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
+import Countdown from 'react-countdown';
 
 const ExamPage = ({ token }) => {
     const { examId } = useParams();
@@ -13,6 +14,8 @@ const ExamPage = ({ token }) => {
     const [exam, setExam] = useState(null);
     const [examStudents, setExamStudents] = useState([]);
     const [reloadKey, setReloadKey] = useState(0);
+    const userRole = localStorage.getItem('userRole');
+    const [nAnswearedQuestions, setNAnswearedQuestions] = useState(0);
 
     useEffect(() => {
         getExam(examId)
@@ -93,6 +96,16 @@ const ExamPage = ({ token }) => {
         }
     };
 
+    const handleSaveAndExit = async () => {
+        await updateExam(examId, {...exam, status: "CLOSED" });
+        console.info("ok")
+        navigate(`/exams`);
+    };
+
+    const handleSaveQuestion = async () => {
+        setNAnswearedQuestions(nAnswearedQuestions + 1);
+    };
+
     if (!exam) {
         return <div>Loading...</div>;
     }
@@ -102,46 +115,67 @@ const ExamPage = ({ token }) => {
             <header className="exam-header">
                 <h2>{exam.title}</h2>
             </header>
-            <div className="exam-details">
-                <div className="exam-details-info">
-                    <p>Rodzaj: {exam.type === "TEST" ? ('Test') : ('Projekt')}</p>
-                    <p>Data rozpoczęcia: {moment(exam.start_date).format('DD-MM-YYYY HH:mm:ss')}</p>
-                    <p>Data zakończenia: {moment(exam.end_date).format('DD-MM-YYYY HH:mm:ss')}</p>
-                    {exam.type === 'TEST' && (
+            {userRole === 'STUDENT' ?
+                (moment(Date()) <= moment(exam.end_date) && exam.status !== "CLOSED")  ? //todo - wywalić || true na koniec testów
+                    moment(Date()) >= moment(exam.start_date) ?
                         <>
-                            <p>Czas trwania: {exam.duration_limit} minut</p>
-                            <p>Liczba pytań: {exam.questions_quantity}</p>
-                        </>
-                    )}
-                    <p>Liczba punktów: {exam.max_points}</p>
-                    <p>Status: {formatExamStatus(exam.status)}</p>
-                </div>
-                { (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') ?
-                    (
-                        <div className="exam-details-buttons">
-                            <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
-                            <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
-                            <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
+                            <div className="exam-questions">
+                                <h2 className="exam-questions-header">
+                                    <div className="exam-questions-name">{exam.type === "TEST" ? "Pytania" : "Zadania"}</div>
+                                    <Countdown daysInHours={true} date={moment(exam.end_date)} onComplete={handleSaveAndExit}/>
+                                    <div className="exam-points"> {nAnswearedQuestions}/{exam.questions_quantity}</div>
+                                </h2>
+                                <QuestionList examId={examId} examType={exam.type} token={token} handleSaveQuestion={handleSaveQuestion}/>
+                                <button type="button" onClick={handleSaveAndExit} className="exam-end-button">Zakończ podejście</button>
+                            </div>
+                        </> :
+
+                        <p>{exam.type === "TEST" ? "Egzamin" : "Projekt"} jeszcze się nie rozpoczął.</p> :
+                    
+                    <p>{exam.type === "TEST" ? "Egzamin" : "Projekt"} już się zakończył.</p> :
+                <>
+                    <div className="exam-details">
+                        <div className="exam-details-info">
+                            <p>Rodzaj: {exam.type === "TEST" ? ('Test') : ('Projekt')}</p>
+                            <p>Data rozpoczęcia: {moment(exam.start_date).format('DD-MM-YYYY HH:mm:ss')}</p>
+                            <p>Data zakończenia: {moment(exam.end_date).format('DD-MM-YYYY HH:mm:ss')}</p>
+                            {exam.type === 'TEST' && (
+                                <>
+                                    <p>Czas trwania: {exam.duration_limit} minut</p>
+                                    <p>Liczba pytań: {exam.questions_quantity}</p>
+                                </>
+                            )}
+                            <p>Liczba punktów: {exam.max_points}</p>
+                            <p>Status: {formatExamStatus(exam.status)}</p>
                         </div>
-                    ) : null
-                }
-            </div>
-            <div className="exam-questions">
-                <header className="exam-questions-header">
-                    {exam.type === "TEST" ? (
-                        <h2>Pytania</h2>
-                    ) : (
-                        <h2>Zadania</h2>
-                    )}
-                </header>
-                <QuestionList examId={examId} examType={exam.type} token={token}/>
-            </div>
-            <div className="exam-students">
-                <header className="exam-students-header">
-                    <h2>Studenci</h2>
-                </header>
-                {<StudentList students={examStudents} />}
-            </div>
+                        { (userRole === "LECTURER") && (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') ?
+                            (
+                                <div className="exam-details-buttons">
+                                    <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
+                                    <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
+                                    <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
+                                </div>
+                            ) : null
+                        }
+                    </div>
+                    <div className="exam-questions">
+                        <header className="exam-questions-header">
+                            <div>{exam.type === "TEST" ? (
+                                <h2>Pytania</h2>
+                            ) : (
+                                <h2>Zadania</h2>
+                            )}</div>
+                        </header>
+                        <QuestionList examId={examId} examType={exam.type} token={token}/>
+                    </div>
+                
+                    <div className="exam-students">
+                        <header className="exam-students-header">
+                            <h2>Studenci</h2>
+                        </header>
+                        {<StudentList students={exam.students} />}
+                    </div>
+                </>}
         </div>
     );
 };

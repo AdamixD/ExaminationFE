@@ -170,7 +170,7 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
 
     if (isNew && !isEditing) {
         return (
-            <button type="button" onClick={handleToggleEdit} className="question-add-button">Dodaj pytanie</button>
+            <button type="button" onClick={handleToggleEdit} className="question-add-button">Dodaj {examType === "TEST" ? "pytanie" : "zadanie"}</button>
         )
     }
     else {
