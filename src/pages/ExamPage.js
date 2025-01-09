@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { getExam, deleteExam, assignExam, updateExam } from '../services/examService';
+import { getExamStudents } from '../services/examStudentsService';
 import QuestionList from '../components/Question/QuestionList';
-// import StudentList from '../components/Exams/StudentList';
+import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
 import Countdown from 'react-countdown';
 
@@ -11,6 +12,7 @@ const ExamPage = ({ token }) => {
     const { examId } = useParams();
     const navigate = useNavigate();
     const [exam, setExam] = useState(null);
+    const [examStudents, setExamStudents] = useState([]);
     const [reloadKey, setReloadKey] = useState(0);
     const userRole = localStorage.getItem('userRole');
     const [nAnswearedQuestions, setNAnswearedQuestions] = useState(0);
@@ -19,6 +21,11 @@ const ExamPage = ({ token }) => {
         getExam(examId)
             .then(data => {
                 setExam(data);
+                return data.id;
+            })
+            .catch(console.error);
+        getExamStudents(examId).then(data => {
+            setExamStudents(data);
                 return data.id;
             })
             .catch(console.error);
@@ -166,7 +173,7 @@ const ExamPage = ({ token }) => {
                         <header className="exam-students-header">
                             <h2>Studenci</h2>
                         </header>
-                        {/*<StudentList students={exam.students} />*/}
+                        {<StudentList students={exam.students} />}
                     </div>
                 </>}
         </div>

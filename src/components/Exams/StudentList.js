@@ -1,23 +1,16 @@
 import React from 'react';
+import StudentCard from './StudentCard';
 
 const StudentList = ({ students }) => {
-    if (students.length === 0 || students === null) {
-        return (
-            <div className="question-list">
-                <p>Do egzaminu nie przypisano jeszcze żadnych studentów.</p>
-            </div>
-        );
-    }
-    else {
-        return (
-            <div>
-                <h2>Studenci</h2>
-                {students.map((student, index) => (
-                    <p key={index}>{index + 1}. {student.name} - {student.score || 'brak wyniku'}</p>
-                ))}
-            </div>
-        );
-    }
+    return (
+        <div>
+            { (students.length > 0) ?
+            (students.map((student, index) => (
+                //<p key={index}>{index + 1}. {student.student.name} - {student.score || 'brak wyniku'}</p>
+                <StudentCard student={student} />
+            ))) : null}
+        </div>
+    );
 };
 
 export default StudentList;
