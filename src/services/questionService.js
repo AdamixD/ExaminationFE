@@ -50,3 +50,15 @@ export const getExamQuestions = async (exam_id, token) => {
         throw error;
     }
 };
+
+export const getExamStudentQuestions = async (exam_id, token) => {
+    try {
+        const response = await api.get(`/${API_ROUTE}/exam/${exam_id}`, {
+            headers: { Authorization: `Bearer ${token}`},
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching exam questions', error);
+        throw error;
+    }
+};
