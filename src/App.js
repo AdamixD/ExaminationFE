@@ -7,6 +7,7 @@ import CoursesPage from './pages/CoursesPage';
 import ExamPage from './pages/ExamPage';
 import ExamsPage from './pages/ExamsPage';
 import ExamFormPage from './pages/ExamFormPage';
+import ExamStudentPage from './pages/ExamStudentPage';
 import './styles/global.css';
 import './styles/theme.css';
 
@@ -41,6 +42,7 @@ function App() {
                     <Route path="/exam/:examId" element={isLoggedIn ? <ExamPage /> : <LoginPage onLogin={handleLogin} />} />
                     <Route path="/exam/add/:type" element={isLoggedIn ? <ExamFormPage /> : <LoginPage onLogin={handleLogin} />} />
                     <Route path="/exam/edit/:type/:examId" element={isLoggedIn ? <ExamFormPage /> : <LoginPage onLogin={handleLogin} />} />
+                    <Route path="/student_exam/:examStudentId" element={isLoggedIn ? <ExamStudentPage /> : <LoginPage onLogin={handleLogin} />} />
                 </Routes>
             </main>
             <Footer />

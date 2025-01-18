@@ -14,3 +14,29 @@ export const getExamStudents = async (examId, token) => {
         throw error;
     }
 };
+
+
+export const getExamStudent = async (examId, studentId, token) => {
+    try {
+        const response = await api.get(`/${API_ROUTE}/ids/${examId}/${studentId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching exam details', error);
+        throw error;
+    }
+};
+
+
+export const getExamStudentByID = async (examStudentId, token) => {
+    try {
+        const response = await api.get(`/${API_ROUTE}/${examStudentId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching exam details', error);
+        throw error;
+    }
+};

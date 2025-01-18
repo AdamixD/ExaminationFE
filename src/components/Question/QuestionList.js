@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import QuestionCard from './QuestionCard';
-import StudentQuestionCard from './StudentQuestionCard';
 import { getExamQuestions, deleteQuestion } from '../../services/questionService';
 import '../../styles/QuestionList.css';
 
-const QuestionList = ({ examId, examType, token, handleSaveQuestion }) => {
+const QuestionList = ({ examId, examType, token }) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const userRole = localStorage.getItem('userRole');
 
     const fetchQuestions = async () => {
         setLoading(true);
@@ -44,55 +42,35 @@ const QuestionList = ({ examId, examType, token, handleSaveQuestion }) => {
     if (loading) return <div>Loading questions...</div>;
     if (error) return <div>Error fetching questions: {error}</div>;
 
-    if (questions.length === 0) {
-        return (
-            <div className="question-list">
-                <p>Brak zdefiniowanych {examType === "TEST" ? "pytań dla tego egzaminu." : "zadań dla tego projektu."}</p>
-                {(userRole === "LECTURER") && (<QuestionCard
-                    question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
-                    examType={examType}
-                    token={token}
-                    onUpdate={handleUpdateQuestions}
-                    isNew={true}
-                />)}
-            </div>
-        );
-    }
-    else {
-        return (
-            <div className="question-list">
-                {(userRole === "LECTURER") ? 
-                    questions.map((question, index) => (
-                        <QuestionCard
-                            index={index}
-                            key={question.id}
-                            question={question}
-                            examType={examType}
-                            token={token}
-                            onDelete={() => handleDeleteQuestion(question.id)}
-                            onUpdate={handleUpdateQuestions}
-                            isNew={false}
-                        />)) :
-                    questions.map((question, index) => (
-                        <StudentQuestionCard
-                            index={index}
-                            key={question.id}
-                            question={question}
-                            examType={examType}
-                            token={token}
-                            onSave={handleSaveQuestion}
-                        />))
-                }
-                {(userRole === "LECTURER") && <QuestionCard
-                    question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
-                    examType={examType}
-                    token={token}
-                    onUpdate={handleUpdateQuestions}
-                    isNew={true}
-                />}
-            </div>
-        );
-    }
+    
+    return (
+        <>
+            {(questions.length > 0) ?
+                <div className="question-list">
+                    {
+                        questions.map((question, index) => (
+                            <QuestionCard
+                                index={index}
+                                key={question.id}
+                                question={question}
+                                examType={examType}
+                                token={token}
+                                onDelete={() => handleDeleteQuestion(question.id)}
+                                onUpdate={handleUpdateQuestions}
+                                isNew={false}
+                            />))
+                    }
+                </div> :
+                <p>Brak zdefiniowanych {examType === "TEST" ? "pytań dla tego egzaminu." : "zadań dla tego projektu."}</p>}
+            
+            <QuestionCard
+                question={{ text: '', image: null, question_items: [], score_type: 'FULL', score: 1, exam_id: examId }}
+                examType={examType}
+                token={token}
+                onUpdate={handleUpdateQuestions}
+                isNew={true}/>
+        </>
+    );
 };
 
 export default QuestionList;
