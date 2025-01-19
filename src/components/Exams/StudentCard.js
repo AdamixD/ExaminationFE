@@ -11,7 +11,7 @@ const StudentCard = ({ student }) => {
     }, []);
 
     const handleClick = () => {
-        //navigate(``);
+        navigate(`/completed_exam/${student.id}`);
     };
 
     return (

@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { getExam, updateExam } from '../services/examService';
-import { getExamStudentByID } from '../services/examStudentsService';
+import { getExam } from '../services/examService';
+import { getExamStudentByID, updateExamStudent } from '../services/examStudentsService';
 import StudentQuestionList from '../components/Question/StudentQuestionList';
 import '../styles/ExamPage.css';
 import Countdown from 'react-countdown';
 
 const ExamPage = ({ token }) => {
     const { examStudentId } = useParams();
-    const [examId, setExamId] = useState(null);
     const navigate = useNavigate();
     const [exam, setExam] = useState(null);
+    const [examStudent, setExamStudent] = useState(null);
     const [nAnswearedQuestions, setNAnswearedQuestions] = useState(0);
 
     const getValues = async () => {
-        let examStudent = await getExamStudentByID(examStudentId);
+        let temp = await getExamStudentByID(examStudentId);
         
-        getExam(examStudent.exam_id)
+        getExam(temp.exam_id)
             .then(data => {
                 setExam(data);
                 return data.id;
             })
             .catch(console.error);
-        setExamId(examStudent.exam_id);
+        setExamStudent(temp);
+
     };
 
     useEffect(() => {
@@ -31,7 +32,7 @@ const ExamPage = ({ token }) => {
     }, [token]);
 
     const handleSaveAndExit = async () => {
-        await updateExam(examId, {...exam, status: "CLOSED" });
+        await updateExamStudent(examStudentId, {...examStudent, status: "COMPLETED" });
         navigate(`/exams`);
     };
 
@@ -56,7 +57,7 @@ const ExamPage = ({ token }) => {
                         <Countdown daysInHours={true} date={moment(exam.end_date)} />
                         <div className="exam-points"> {nAnswearedQuestions}/{exam.questions_quantity}</div>
                     </h2>
-                    <StudentQuestionList examId={examId} examType={exam.type} token={token} handleSaveQuestion={handleSaveQuestion}/>
+                    <StudentQuestionList examStudentId={examStudentId} questions = {examStudent.questions} examType={exam.type} token={token} handleSaveQuestion={handleSaveQuestion}/>
                     <button type="button" onClick={handleSaveAndExit} className="exam-end-button">Zakończ podejście</button>
                 </div>}
         </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import StudentCard from './StudentCard';
 
 const StudentList = ({ students }) => {
+    console.info(students);
     return (
         <div>
             { (students.length > 0) ?
