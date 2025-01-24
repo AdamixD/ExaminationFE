@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import '../../styles/StudentQuestionCard.css';
 import { createAnswer, updateAnswer } from '../../services/studentQuestionService';
 
-const StudentQuestionCard = ({ index, question, examType, token, onSave}) => {
+const StudentQuestionCard = ({ index, question, examType, examStudentId, token, onSave}) => {
     const [isEditing, setIsEditing] = useState(true);
     const [answers, setAnswers] = useState(Array(question.question_items.length).fill(false));
     const [openAnswer, setOpenAnswer] = useState("");
@@ -32,16 +32,16 @@ const StudentQuestionCard = ({ index, question, examType, token, onSave}) => {
     const handleAnswerSave = async () => {
         if (determineQuestionType(question.question_items) === 'OPEN')
         {
-            var answer = openAnswer;
+            var answer = `${question.id}: ${openAnswer}`;
         }
         else
         {
-            var answer = ""
+            var answer = `${question.id}: `
             for (let i = 0; i < answers.length; i++)
                 answer += answers[i] ? "T" : "F";
         }
-        // todo exam_student_id
-        let answerData = {score: 0, comment: null, answer: answer, exam_student_id: 3, question_id: question.id};
+        
+        let answerData = {score: 0, comment: null, answer: answer, exam_student_id: examStudentId, question_id: question.id};
         if (!isAnswered)
         {
             let answer_id = await createAnswer(answerData);

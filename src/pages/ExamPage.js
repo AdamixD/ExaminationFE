@@ -34,14 +34,22 @@ const ExamPage = ({ token }) => {
     }, [token, examId, reloadKey]);
 
     const tryToTakeExam = async (data) => {
+
+        if (userRole === "STUDENT" && moment(Date()) > moment(data.end_date) )
+            {
+                let studentExam = await getExamStudent(examId, userID);
+                if (studentExam.id)
+                    navigate(`/completed_exam/${studentExam.id}`);
+            }
+
         if (userRole === "STUDENT" && moment(Date()) <= moment(data.end_date) && moment(Date()) >= moment(data.start_date))
         {
             let studentExam = await getExamStudent(examId, userID);
-            console.log("studentExam.id", studentExam.id, examId);
+
             if (studentExam.id)
                 navigate(`/student_exam/${studentExam.id}`);
             else
-                setExam(0);
+                setExam(null);
         }
     }
 

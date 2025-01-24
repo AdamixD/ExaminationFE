@@ -25,3 +25,15 @@ export const updateAnswer = async (answerId, answerData, token) => {
         throw error;
     }
 };
+
+export const updateResult = async (question_result_id, data, token) => {
+    try {
+        const response = await api.put(`/${API_ROUTE}/${question_result_id}`, data, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error updating question result', error);
+        throw error;
+    }
+};
