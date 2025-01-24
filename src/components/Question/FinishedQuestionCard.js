@@ -81,7 +81,7 @@ const FinishedQuestionCard = ({ index, question, token, exam_student}) => {
                     <input type="text" value={comment} onChange={(e) => setComment(e.target.value)} className="question-text"/>
                 </>
             :
-                comment !== "" && <>
+                comment !== "" && comment !== null && <>
                     <p className="question-items-form">Komentarz prowadzącego:</p>
                     <div className="comment-box">
                         <p className="comment-content">{comment}</p>
