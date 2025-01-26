@@ -3,7 +3,7 @@ import '../../styles/QuestionCard.css';
 import {updateQuestion, createQuestion} from '../../services/questionService';
 import {updateQuestionItem, createQuestionItem, deleteQuestionItem} from '../../services/questionItemService';
 
-const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, isNew }) => {
+const QuestionCard = ({ index, question, examType, examStatus, token, onUpdate, onDelete, isNew }) => {
     const [localQuestion, setLocalQuestion] = useState({ ...question });
     const [isEditing, setIsEditing] = useState(false);
     const [originalQuestion, setOriginalQuestion] = useState({ ...question });
@@ -78,6 +78,16 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
             return 'Wielokrotnego wyboru';
         }
     };
+
+    const getFormatedScoreType = (scoreType) => {
+        if (scoreType === 'FULL') {
+            return 'Pełna poprawność';
+        } else if (scoreType === 'PROPORTIONAL') {
+            return 'Proporcjonalne';
+        } else {
+            return 'nieznany'
+        }
+    }
 
     const handleQuestionItemChange = (text, idx) => {
         const updatedQuestionItems = localQuestion.question_items.map((questionItem, index) => {
@@ -179,7 +189,8 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
                 {isEditing ? (
                     <form onSubmit={e => e.preventDefault()} className="question-details">
                         <div className="question-header">
-                            <input type="text" value={localQuestion.text} onChange={handleQuestionTextChange} className="question-text"/>
+                            {examStatus !== 'ASSIGNED' ? <input type="text" value={localQuestion.text} onChange={handleQuestionTextChange} className="question-text"/>
+                            : <p className="question-text">{localQuestion.text}</p>}
                             <div className="question-type">{getFormatedQuestionType(getQuestionType())}</div>
                         </div>
                         {examType === "TEST" && (
@@ -187,30 +198,33 @@ const QuestionCard = ({ index, question, examType, token, onUpdate, onDelete, is
                                 <div className="question-items">
                                     {localQuestion.question_items.map((questionItem, idx) => (
                                         <div key={idx} className="question-item">
-                                            <input type="text" value={questionItem.text} onChange={(e) => handleQuestionItemChange(e.target.value, idx)} className="question-item-input-text"/>
+                                            {examStatus !== 'ASSIGNED' ? <input type="text" value={questionItem.text} onChange={(e) => handleQuestionItemChange(e.target.value, idx)} className="question-item-input-text"/>
+                                            : <div className="question-item-input-text">{questionItem.text}</div>}
                                             <button type="button" onClick={() => handleQuestionCorrectnessChange(idx)} className={`question-item-correctness-button ${questionItem.correctness ? 'true' : 'false'}`}>{questionItem.correctness ? 'Prawda' : 'Fałsz'}</button>
-                                            <button type="button" onClick={() => handleRemoveQuestionItem(idx)} className="question-item-delete-button">Usuń</button>
+                                            {examStatus !== 'ASSIGNED' && <button type="button" onClick={() => handleRemoveQuestionItem(idx)} className="question-item-delete-button">Usuń</button>}
                                         </div>
                                     ))}
                                 </div>
-                                <button type="button" onClick={handleAddQuestionItem} className="question-items-form-button">Dodaj odpowiedź</button>
+                                {examStatus !== 'ASSIGNED' && <button type="button" onClick={handleAddQuestionItem} className="question-items-form-button">Dodaj odpowiedź</button>}
                             </div>
                         )}
                         <div className="question-score-type">
                             <label>Ocenianie</label>
-                            <div className="question-score-type-items">
+                            {examStatus !== 'ASSIGNED' ? <div className="question-score-type-items">
                                 {getQuestionType() !== 'OPEN' ? (
                                     <label><input type="radio" checked={localQuestion.score_type === 'FULL'} onChange={() => handleQuestionScoreTypeChange('FULL')} className="question-score-type-item"/> Pełna poprawność</label>
                                     ) : null
                                 }
                                 <label><input type="radio" checked={localQuestion.score_type === 'PROPORTIONAL'} onChange={() => handleQuestionScoreTypeChange('PROPORTIONAL')} className="question-score-type-item"/> Proporcjonalne</label>
-                            </div>
+                            </div> :
+                            <p>{getFormatedScoreType(localQuestion.score_type)}</p>}
                         </div>
-                        <label>Liczba punktów: <input type="number" value={localQuestion.score} onChange={handleQuestionScoreChange} min="1" className="question-score"/></label>
+                        {examStatus !== 'ASSIGNED' ? <label>Liczba punktów: <input type="number" value={localQuestion.score} onChange={handleQuestionScoreChange} min="1" className="question-score"/></label>
+                         : <p>Liczba punktów: {localQuestion.score}</p>}
                         <div className="question-form-buttons">
                             <button type="button" onClick={handleQuestionSave} className="question-form-button">Zapisz</button>
                             <button type="button" onClick={handleToggleEdit} className="question-form-button">Anuluj</button>
-                            <button type="button" onClick={handleQuestionDelete} className="question-form-button">Usuń</button>
+                            {examStatus !== 'ASSIGNED' && <button type="button" onClick={handleQuestionDelete} className="question-form-button">Usuń</button>}
                         </div>
                     </form>
                 ) : (

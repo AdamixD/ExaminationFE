@@ -146,7 +146,7 @@ const ExamPage = ({ token }) => {
                     (
                         <div className="exam-details-buttons">
                             <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
-                            <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>
+                            {exam.status !== 'ASSIGNED' && <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>}
                             <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
                         </div>
                     ) : null
@@ -162,7 +162,7 @@ const ExamPage = ({ token }) => {
                             <h2>Zadania</h2>
                         )}</div>
                     </header>
-                    <QuestionList examId={examId} examType={exam.type} token={token}/>
+                    <QuestionList examId={examId} examType={exam.type} examStatus={exam.status} token={token}/>
                 </div>
             
                 <div className="exam-students">
