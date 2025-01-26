@@ -74,3 +74,14 @@ export const assignExam = async (examId, token) => {
         throw error;
     }
 };
+
+export const unassignExam = async (examId, token) => {
+    try {
+        const response = await api.post(`/${API_ROUTE}/unassign/${examId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error unassigning exam', error);
+    }
+}

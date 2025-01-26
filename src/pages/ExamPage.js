@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { getExam, deleteExam, assignExam } from '../services/examService';
+import { getExam, deleteExam, assignExam, unassignExam } from '../services/examService';
 import { getExamStudents, getExamStudent } from '../services/examStudentsService';
 import {getUser} from '../services/userService';
 import QuestionList from '../components/Question/QuestionList';
@@ -85,6 +85,25 @@ const ExamPage = ({ token }) => {
             }
         }
     };
+    
+    const handleUnassignExam = async () => {
+
+        try {
+            if (exam.status === 'ASSIGNED') {
+                if (window.confirm(`Czy na pewno chcesz anulować przypisanie tego ${exam.type === "TEST" ? 'testu' : 'projektu'}?`)) {
+                    await unassignExam(examId); // Assuming this function exists for unassigning
+                    setReloadKey(prevKey => prevKey + 1);
+                    alert('Przypisanie zostało anulowane.');
+                }
+            } else {
+                alert(`Anulowanie przypisania możliwe jest tylko dla egzaminu w statusie "Przypisany".
+                       Po rozpoczęciu egzaminu nie można go edytować ani anulować przypisania.`);
+            }
+        } catch (error) {
+            console.error('Error unassigning exam', error);
+            alert('Error unassigning exam: ' + (error.message || 'Unknown error'));
+        }
+    }
 
     const handleEditExam = () => {
         if (exam.status === 'UNDEFINED') {
@@ -152,8 +171,9 @@ const ExamPage = ({ token }) => {
                 { (userRole === "LECTURER") && (exam.status === 'UNDEFINED' || exam.status === 'ASSIGNED') ?
                     (
                         <div className="exam-details-buttons">
-                            <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>
+                            {exam.status === 'UNDEFINED' && <button onClick={handleAssignExam} className="exam-details-button">Przypisz</button>}
                             {exam.status !== 'ASSIGNED' && <button onClick={handleEditExam} className="exam-details-button">Edytuj</button>}
+                            {exam.status === 'ASSIGNED' && <button onClick={handleUnassignExam} className="exam-details-button">Anuluj przypisanie</button>}
                             <button onClick={handleDeleteExam} className="exam-details-button delete">Usuń</button>
                         </div>
                     ) : null
