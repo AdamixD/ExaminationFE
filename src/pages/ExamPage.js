@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { getExam, deleteExam, assignExam } from '../services/examService';
 import { getExamStudents, getExamStudent } from '../services/examStudentsService';
+import {getUser} from '../services/userService';
 import QuestionList from '../components/Question/QuestionList';
 import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
@@ -14,37 +15,43 @@ const ExamPage = ({ token }) => {
     const [examStudents, setExamStudents] = useState([]);
     const [reloadKey, setReloadKey] = useState(0);
     const userRole = localStorage.getItem('userRole');
-    const userID = 1; //todo - jak ogarnąć ID?
+    // const [userID, setUserID] = useState(null);
 
-    useEffect(() => {
+
+    const getData = async () => {
+        var temp = await getUser(localStorage.getItem("token"));
+
         getExam(examId)
             .then(data => {
                 setExam(data);
-                tryToTakeExam(data);
+                tryToTakeExam(data, temp.id);
                 return data.id;
             })
             .catch(console.error);
         
-            // console.info(examId);
         getExamStudents(examId).then(data => {
             setExamStudents(data);
                 return data.id;
             })
             .catch(console.error);
+    }
+
+    useEffect(() => {
+        getData();
     }, [token, examId, reloadKey]);
 
-    const tryToTakeExam = async (data) => {
+    const tryToTakeExam = async (data, temp_user_id) => {
 
         if (userRole === "STUDENT" && moment(Date()) > moment(data.end_date) )
             {
-                let studentExam = await getExamStudent(examId, userID);
+                let studentExam = await getExamStudent(examId, temp_user_id);
                 if (studentExam.id)
                     navigate(`/completed_exam/${studentExam.id}`);
             }
 
         if (userRole === "STUDENT" && moment(Date()) <= moment(data.end_date) && moment(Date()) >= moment(data.start_date))
         {
-            let studentExam = await getExamStudent(examId, userID);
+            let studentExam = await getExamStudent(examId, temp_user_id);
 
             if (studentExam.id)
                 navigate(`/student_exam/${studentExam.id}`);
@@ -169,7 +176,7 @@ const ExamPage = ({ token }) => {
                     <header className="exam-students-header">
                         <h2>Studenci</h2>
                     </header>
-                    {<StudentList students={examStudents} />}
+                    {<StudentList student_exams={examStudents} />}
                 </div>
             </>}
         </div>

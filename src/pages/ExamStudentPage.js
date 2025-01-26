@@ -49,7 +49,7 @@ const ExamPage = ({ token }) => {
             <header className="exam-header">
                 <h2>{exam.title}</h2>
             </header>
-            {(exam.status === "CLOSED")  ?
+            {(examStudent.status === "COMPLETED" || examStudent.status === "CLOSED")  ?
                 <p>Zakończyłeś już ten {exam.type === "TEST" ? "egzamin" : "projekt"} .</p> :
                 <div className="exam-questions">
                     <h2 className="exam-questions-header">

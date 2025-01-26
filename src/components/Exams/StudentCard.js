@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/StudentCard.css';
 
-const StudentCard = ({ student }) => {
+const StudentCard = ({ student_exam }) => {
     const navigate = useNavigate();
     const [percentage, setPercentage] = useState(0);
 
     useEffect(() => {
-        setPercentage(student.score / student.exam.max_points * 100);
+        // console.info(student_exam.score)
+        setPercentage(student_exam.score / student_exam.exam.max_points * 100);
     }, []);
 
     const handleClick = () => {
-        navigate(`/completed_exam/${student.id}`);
+        navigate(`/completed_exam/${student_exam.id}`);
     };
 
     return (
@@ -22,10 +23,10 @@ const StudentCard = ({ student }) => {
         //     <div className="student-type">{getFormatedQuestionType()}</div>
         // </div>
         <div className="student-card" onClick={handleClick}>
-            <p className="student-title">{student.student.name} {student.student.surname}</p>
+            <p className="student-title">{student_exam.student.name} {student_exam.student.surname}</p>
             <div className="student-info">
-                {student.score ? 
-                <div className="student-type">{student.score} ({percentage.toFixed(2)}%)</div>
+                {student_exam.score != null ? 
+                <div className="student-type">{student_exam.score} ({percentage.toFixed(2)}%)</div>
                 :
                 <div className="student-type">brak wyniku</div>
                 }

@@ -43,7 +43,13 @@ const FinishedExamPage = ({ token }) => {
     }, [token]);
 
     const confirmGrade = async () => {
-        updateExamStudent(examStudentId, {...examStudent, status: "CLOSED" });
+        var grade = 0;
+        let temp =  await getExamStudentByID(examStudentId);
+        
+        for (var i = 0; i<temp.question_results.length; i++)
+            grade += temp.question_results[i].score;
+
+        updateExamStudent(examStudentId, {...examStudent, score: grade, status: "CLOSED" });
         alert('Ocena została zapisana.');
     }
 
