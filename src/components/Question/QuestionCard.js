@@ -181,65 +181,67 @@ const QuestionCard = ({ index, question, examType, examStatus, token, onUpdate, 
         }
     };
 
-    if (isNew && !isEditing) {
-        return (
-            <button type="button" onClick={handleToggleEdit} className="question-add-button">Dodaj {examType === "TEST" ? "pytanie" : "zadanie"}</button>
-        )
-    }
-    else {
-        return (
-            <div className="question-card">
-                {isEditing ? (
-                    <form onSubmit={e => e.preventDefault()} className="question-details">
-                        <div className="question-header">
-                            {allowQuestionEdit ? <input type="text" value={localQuestion.text} onChange={handleQuestionTextChange} className="question-text"/>
-                            : <p className="question-text">{localQuestion.text}</p>}
-                            <div className="question-type">{getFormatedQuestionType(getQuestionType())}</div>
-                        </div>
-                        {examType === "TEST" && (
-                            <div className="question-items-form">
-                                <div className="question-items">
-                                    {localQuestion.question_items.map((questionItem, idx) => (
-                                        <div key={idx} className="question-item">
-                                            {allowQuestionEdit ? <input type="text" value={questionItem.text} onChange={(e) => handleQuestionItemChange(e.target.value, idx)} className="question-item-input-text"/>
-                                            : <div className="question-item-input-text">{questionItem.text}</div>}
-                                            <button type="button" onClick={() => handleQuestionCorrectnessChange(idx)} className={`question-item-correctness-button ${questionItem.correctness ? 'true' : 'false'}`}>{questionItem.correctness ? 'Prawda' : 'Fałsz'}</button>
-                                            {allowQuestionEdit && <button type="button" onClick={() => handleRemoveQuestionItem(idx)} className="question-item-delete-button">Usuń</button>}
-                                        </div>
-                                    ))}
-                                </div>
-                                {allowQuestionEdit && <button type="button" onClick={handleAddQuestionItem} className="question-items-form-button">Dodaj odpowiedź</button>}
+    if (allowQuestionEdit) {
+        if (isNew && !isEditing) {
+            return (
+                <button type="button" onClick={handleToggleEdit} className="question-add-button">Dodaj {examType === "TEST" ? "pytanie" : "zadanie"}</button>
+            )
+        }
+        else {
+            return (
+                <div className="question-card">
+                    {isEditing ? (
+                        <form onSubmit={e => e.preventDefault()} className="question-details">
+                            <div className="question-header">
+                                {allowQuestionEdit ? <input type="text" value={localQuestion.text} onChange={handleQuestionTextChange} className="question-text"/>
+                                : <p className="question-text">{localQuestion.text}</p>}
+                                <div className="question-type">{getFormatedQuestionType(getQuestionType())}</div>
                             </div>
-                        )}
-                        <div className="question-score-type">
-                            <label>Ocenianie</label>
-                            {allowQuestionEdit ? <div className="question-score-type-items">
-                                {getQuestionType() !== 'OPEN' ? (
-                                    <label><input type="radio" checked={localQuestion.score_type === 'FULL'} onChange={() => handleQuestionScoreTypeChange('FULL')} className="question-score-type-item"/> Pełna poprawność</label>
-                                    ) : null
-                                }
-                                <label><input type="radio" checked={localQuestion.score_type === 'PROPORTIONAL'} onChange={() => handleQuestionScoreTypeChange('PROPORTIONAL')} className="question-score-type-item"/> Proporcjonalne</label>
-                            </div> :
-                            <p>{getFormatedScoreType(localQuestion.score_type)}</p>}
+                            {examType === "TEST" && (
+                                <div className="question-items-form">
+                                    <div className="question-items">
+                                        {localQuestion.question_items.map((questionItem, idx) => (
+                                            <div key={idx} className="question-item">
+                                                {allowQuestionEdit ? <input type="text" value={questionItem.text} onChange={(e) => handleQuestionItemChange(e.target.value, idx)} className="question-item-input-text"/>
+                                                : <div className="question-item-input-text">{questionItem.text}</div>}
+                                                <button type="button" onClick={() => handleQuestionCorrectnessChange(idx)} className={`question-item-correctness-button ${questionItem.correctness ? 'true' : 'false'}`}>{questionItem.correctness ? 'Prawda' : 'Fałsz'}</button>
+                                                {allowQuestionEdit && <button type="button" onClick={() => handleRemoveQuestionItem(idx)} className="question-item-delete-button">Usuń</button>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {allowQuestionEdit && <button type="button" onClick={handleAddQuestionItem} className="question-items-form-button">Dodaj odpowiedź</button>}
+                                </div>
+                            )}
+                            <div className="question-score-type">
+                                <label>Ocenianie</label>
+                                {allowQuestionEdit ? <div className="question-score-type-items">
+                                    {getQuestionType() !== 'OPEN' ? (
+                                        <label><input type="radio" checked={localQuestion.score_type === 'FULL'} onChange={() => handleQuestionScoreTypeChange('FULL')} className="question-score-type-item"/> Pełna poprawność</label>
+                                        ) : null
+                                    }
+                                    <label><input type="radio" checked={localQuestion.score_type === 'PROPORTIONAL'} onChange={() => handleQuestionScoreTypeChange('PROPORTIONAL')} className="question-score-type-item"/> Proporcjonalne</label>
+                                </div> :
+                                <p>{getFormatedScoreType(localQuestion.score_type)}</p>}
+                            </div>
+                            {allowQuestionEdit ? <label>Liczba punktów: <input type="number" value={localQuestion.score} onChange={handleQuestionScoreChange} min="1" className="question-score"/></label>
+                             : <p>Liczba punktów: {localQuestion.score}</p>}
+                            <div className="question-form-buttons">
+                                <button type="button" onClick={handleQuestionSave} className="question-form-button">Zapisz</button>
+                                <button type="button" onClick={handleToggleEdit} className="question-form-button">Anuluj</button>
+                                {allowQuestionEdit && <button type="button" onClick={handleQuestionDelete} className="question-form-button">Usuń</button>}
+                            </div>
+                        </form>
+                    ) : (
+                        <div className="question-header">
+                            <div onClick={handleToggleEdit} className="question-preview">
+                                {index + 1}. {localQuestion.text}
+                            </div>
+                            <div className="question-type">{getFormatedQuestionType()}</div>
                         </div>
-                        {allowQuestionEdit ? <label>Liczba punktów: <input type="number" value={localQuestion.score} onChange={handleQuestionScoreChange} min="1" className="question-score"/></label>
-                         : <p>Liczba punktów: {localQuestion.score}</p>}
-                        <div className="question-form-buttons">
-                            <button type="button" onClick={handleQuestionSave} className="question-form-button">Zapisz</button>
-                            <button type="button" onClick={handleToggleEdit} className="question-form-button">Anuluj</button>
-                            {allowQuestionEdit && <button type="button" onClick={handleQuestionDelete} className="question-form-button">Usuń</button>}
-                        </div>
-                    </form>
-                ) : (
-                    <div className="question-header">
-                        <div onClick={handleToggleEdit} className="question-preview">
-                            {index + 1}. {localQuestion.text}
-                        </div>
-                        <div className="question-type">{getFormatedQuestionType()}</div>
-                    </div>
-                )}
-            </div>
-        );
+                    )}
+                </div>
+            );
+        }
     }
 };
 
