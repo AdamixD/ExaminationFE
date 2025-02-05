@@ -148,8 +148,13 @@ const ExamPage = ({ token }) => {
         return <div>Nie znaleziono podanego egzaminu.</div>;
     }
 
+    const handleBackButton = () => {
+        navigate(`/exams`);
+    };
+
     return (
         <div className="exam-page">
+            <button className="back-button" onClick={handleBackButton}>Wróć</button>
             <header className="exam-header">
                 <h2>{exam.title}</h2>
             </header>

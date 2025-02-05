@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getExam } from '../services/examService';
 import { getExamStudentByID, updateExamStudent } from '../services/examStudentsService';
 import FinishedQuestionsList from '../components/Question/FinishedQuestionsList';
+import { useNavigate } from "react-router-dom";
 import '../styles/FinishedExamPage.css';
 
 const FinishedExamPage = ({ token }) => {
@@ -13,6 +14,7 @@ const FinishedExamPage = ({ token }) => {
     const [maxExamScore, setmaxExamScore] = useState(0);
     const [percentage, setPercentage] = useState(0);
     const userRole = localStorage.getItem('userRole');
+    const navigate = useNavigate();
 
     const getValues = async () => {
         let temp =  await getExamStudentByID(examStudentId);
@@ -57,8 +59,20 @@ const FinishedExamPage = ({ token }) => {
         return <div>Nie znaleziono podanego egzaminu.</div>;
     }
 
+    const handleBackButton = () => {
+        if (userRole === "LECTURER")//go back to current exam page
+        {
+            navigate(`/exam/${exam.id}`);
+        }
+        else//go back to exams page
+        {
+            navigate(`/exams`);
+        }
+    };
+
     return (
         <div className="exam-page">
+            <button className="back-button" onClick={handleBackButton}>Wróć</button>
             <h2 className="exam-header">{exam.title}</h2>
             {(examStudent.status === "CLOSED") || userRole === "LECTURER"?
                 <div className="exam-questions">
