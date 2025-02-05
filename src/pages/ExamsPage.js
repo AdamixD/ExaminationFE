@@ -33,8 +33,13 @@ const ExamsPage = ({ token }) => {
         navigate(`/exam/add/${type}`);
     };
 
+    const handleBackButton = () => {
+        navigate(`/courses`);
+    };
+
     return (
         <div className="exams-page">
+            <button className="back-button" onClick={handleBackButton}>Wróć</button>
             <header className="exams-header">
                 <h2>Egzaminy</h2>
             </header>
