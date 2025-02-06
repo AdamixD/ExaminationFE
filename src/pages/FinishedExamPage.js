@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getExam } from '../services/examService';
 import { getExamStudentByID, updateExamStudent } from '../services/examStudentsService';
 import FinishedQuestionsList from '../components/Question/FinishedQuestionsList';
+import ExamsHistogram from '../components/Exams/ExamsHistogram';
 import { useNavigate } from "react-router-dom";
 import '../styles/FinishedExamPage.css';
 
@@ -83,9 +84,13 @@ const FinishedExamPage = ({ token }) => {
                 </div>
                 :
                 <p>{exam.type === "TEST" ? "Egzamin" : "Projekt"} oczekuje na ocenę przez prowadzącego.</p>}
+            {(userRole === "STUDENT" && examStudent.status === "CLOSED") && 
+                <ExamsHistogram token={token} exam={exam}></ExamsHistogram>
+                }
             {userRole === "LECTURER" &&
                 (examStudent.status === "COMPLETED" || examStudent.status === "CLOSED") &&
-                    <button type="button" onClick={confirmGrade} className="question-form-button">Zapisz ocenę</button>}
+                    <button type="button" onClick={confirmGrade} className="question-form-button">Zapisz ocenę</button>
+                    }
         </div>
     );
 };

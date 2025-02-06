@@ -7,6 +7,7 @@ import {getUser} from '../services/userService';
 import QuestionList from '../components/Question/QuestionList';
 import StudentList from '../components/Exams/StudentList';
 import '../styles/ExamPage.css';
+import ExamsHistogram from '../components/Exams/ExamsHistogram';
 
 const ExamPage = ({ token }) => {
     const { examId } = useParams();
@@ -196,7 +197,9 @@ const ExamPage = ({ token }) => {
                     </header>
                     <QuestionList examId={examId} examType={exam.type} examStatus={exam.status} token={token}/>
                 </div>
-            
+                {(exam.status === 'ACTIVE' || (exam.status === 'CLOSED')) &&
+                    <ExamsHistogram token={token} exam={exam}></ExamsHistogram>
+                }
                 <div className="exam-students">
                     <header className="exam-students-header">
                         <h2>Studenci</h2>
