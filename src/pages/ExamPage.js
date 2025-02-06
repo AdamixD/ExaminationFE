@@ -197,7 +197,7 @@ const ExamPage = ({ token }) => {
                     </header>
                     <QuestionList examId={examId} examType={exam.type} examStatus={exam.status} token={token}/>
                 </div>
-                {(exam.status === 'ACTIVE' || (exam.status === 'CLOSED')) &&
+                {(exam.status === 'CLOSED') &&
                     <ExamsHistogram token={token} exam={exam}></ExamsHistogram>
                 }
                 <div className="exam-students">
